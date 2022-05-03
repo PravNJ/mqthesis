@@ -96,12 +96,11 @@ Hierarchical clusters can be visualised using a dendogram. A dendogram is a bina
 This research uses the complete linkage dissimilarity to cluster spectral groups. The justification for using this measure over the single linkage dissimilarity is to force the separation of P Cygni and inverse P Cygni spectra into distinct groups by exploiting the maximum distance between two individual spectra that belong to these groups. Other distance measures such as group average clustering uses the average dissimilarity between the groups. This research does not consider this measure as it may be less accurate in separating P Cygni from inverse P Cygni. A full discussion of the advantages and disadvantages of each approach is beyond the scope of this thesis. This research also relies on the agglomerative paradigm as it is more robust and has been studied extensively in the literature while the divisive paradigm has not been studied extensively \cite{hastie2009elements}.
 
 
-
 \subsection{Selecting the Number of Clusters}
 
 Given that the framework proposed above is an entirely unsupervised machine learning approach, it is generally not required that the cluster size be specified in advance. In the absence of a predefined cluster size, the typical approach would require a plot of the dendogram where suitable cuts be made at a required level. However since the tree can theoretically be cut at any level and can have a maximum cluster size equal to the number of samples and a minimum cluster size equal to 1, as will be demonstrated below, a more meaningful and reliable cut can be made with the aide of astrophysical domain knowledge. In the absence of such knowledge this research would have to cut the dendogram at each level, the examine the clusters and subsequently decide on a suitable cluster size. Furthermore, given that the sample size is at least 10,000 spectra, visually inspecting a dendogram for this dataset can be challenging. This research proposes the use of prior art to determine a cluster size in advance, thus eliminating the requirement to visually inspect a complex dendogram of the order of thousands of branches. 
 
-While this research is focused on P Cygni and inverse P Cygni spectra, it is clear that other morphologies of H$\alpha$ candidates have been found using manual methods. Reipurth et al. in particular proposed the existence of seven morphological groups which include P Cygni and inverse P Cygni as well as five other H$\alpha$ emission morphologies \cite{reipurth1996halpha}. If the cluster size is set only to two, there is a significant risk that other morphologies will be included in the P Cygni cluster and inverse P Cygni cluster thus leading to erroneously classified/labelled clusters. Thus based on the prior art, this research takes cluster sizes between seven and ten to be a suitable range. The number of samples this research will subject to automated clustering will be significantly higher than any previous prior art, especially the manual classification approaches detailed in prior chapters. The justification to use a higher number of clusters such as ten is to account for the possibility of additional morphological classes that may have been missed in the prior art during manual observation. 
+While this research is focused on P Cygni and inverse P Cygni spectra, it is clear that other morphologies of H$\alpha$ candidates have been found using manual methods. Reipurth et al. in particular proposed the existence of seven morphological groups which include P Cygni and inverse P Cygni as well as five other H$\alpha$ emission morphologies \cite{reipurth1996halpha}. If the cluster size is set only to two, there is a significant risk that other morphologies will be included in the P Cygni cluster and inverse P Cygni cluster thus leading to erroneously classified/labelled clusters. Thus based on the prior art, this research takes cluster sizes between six and ten to be a suitable range. The number of samples this research will subject to automated clustering will be significantly higher than any previous prior art, especially the manual classification approaches detailed in prior chapters. The justification to use a higher number of clusters such as ten is to account for the possibility of additional morphological classes that may have been missed in the prior art during manual observation. 
 
 \section{The Results}
 
@@ -113,15 +112,61 @@ The results of the DTW distance calculation can be visualised as a distance cost
 \caption{Pairwise DTW distances for spectral samples in Čotar et al. which are also in DR3}
 \end{figure}
 
-These distances were 
-
-
+This distance matrix was used as the basis for complete linkage aggolomerative hierarchical clustering. Cluster size was varied between seven and ten. A mean silhouette score was calculated for each cluster size. This score can then be used as a selection criterion for the cluster size. Silhouette scores can range between -1 and 1. Negative scores indicate that samples may be assigned to the wrong cluster. Values extremely close to zero indicate that clusters may overlap. The best achievable value is 1, although this is rarely achieved in practical unsupervised clustering problems of this nature. Thus the silhouette score is a measure of the efficacy of the clustering process.
 
 \begin{figure}[t]
 \centering
 \includegraphics[scale=0.60]{figures/dtw cotar zoomed.png}
 \caption{Pairwise DTW distances for spectral samples in Čotar et al. which are also in DR3 (zoomed)}
 \end{figure}
+
+In order to calculate the mean silhouette score, silhouette coefficients for all samples must be calculated as follows. Compute the mean intra-cluster distances given by $a$ and then compute the mean nearest-cluster distance $b$ for each sample. The sample silhouette coefficient is then given by,
+
+\begin{equation}
+\frac{(b-a)}{\max_{}(a,b)}
+\end{equation}
+
+Once the coefficient for each sample is calculated, the mean silhouette score for the entire sample is computed. The following table summarises the scores for each cluster size.
+
+
+\begin{center}
+\begin{tabular}{||c c||} 
+ \hline
+ Cluster Size & Silhouette Score \\ [0.5ex]
+ \hline\hline
+ 6 & 0.2904 \\ 
+ \hline\hline
+ 7 & 0.3033 \\ 
+ \hline
+ 8 & 0.3005 \\
+ \hline
+ 9 & 0.3092 \\
+ \hline
+ 10 & 0.3044 \\ [1ex] 
+ \hline
+\end{tabular}
+\end{center}
+
+At face value it appears that a cluster size of nine is the optimum cluster size given that this produces the largest silhouette score. However upon closer examination it was concluded that a cluster size of ten is more suitable under the essential constraint that P Cygni and inverse P Cygni spectra should be adequately separated from other clusters. Thus, the spectra that belong to each cluster for both nine clusters and ten clusters were plotted. For nine clusters, while a P Cygni only cluster was discovered, a cluster containing inverse P Cygni spectra was not discovered. However for ten clusters, two clear clusters of P Cygni and inverse P Cygni spectra were discovered.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{figures/pcygni.png}
+\caption{102 P Cygni spectra identified using clustering.}
+\end{figure}
+
+The inverse P Cygni cluster contains an outlier. This will be discussed further in subsequent chapters.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{figures/inverse p cygni.png}
+\caption{63 Inverse P Cygni spectra identified using clustering.}
+\end{figure}
+
+
+
+
+
 
 
 
