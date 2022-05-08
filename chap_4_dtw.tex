@@ -54,7 +54,7 @@ def distDTW(lambda1, lambda2):
      return sqrt(DTW[len(lambda1)-1, len(lambda2)-1])
 \end{lstlisting}
 
-Despite the effectiveness of this algorithm, the computational complexity is of order $O(N^2)$. As this presents a significant computational cost and overhead, this research relies on a linear time complexity i.e. $O(N)$ implementation of DTW called \texttt{FastDTW} to compute the optimum distance between spectra and thus the similairty \cite{salvador2007toward}. \texttt{FastDTW} is a linear approximation to the DTW method above and a full discussion is beyond the scope of this thesis. 
+Despite the effectiveness of this algorithm, the computational complexity is of order $O(N^2)$. As this presents a significant computational cost and overhead, this research relies on a linear time complexity i.e. $O(N)$ Python language implementation of DTW called \texttt{FastDTW} to compute the optimum distance between spectra and thus the similairty \cite{salvador2007toward}. \texttt{FastDTW} is a linear approximation to the DTW method above and a full discussion is beyond the scope of this thesis. 
 
 In addition to computational complexity, an important consideration when running DTW is available memory. All spectral data must be loaded into memory (RAM) when computing DTW distances. In the case of DR3, this implies holding $\sim$ \num[round-precision=2,round-mode=figures, scientific-notation=true]{2928752091} features in memory. The computational hardware available for this project had a memory capacity of $\sim$ 300 GB. DTW required a memory capacity of at least 1TB for the $\sim$ \num[round-precision=2,round-mode=figures, scientific-notation=true]{2928752091} features. This is a significant amount of data to hold in memory. 
 
@@ -129,25 +129,23 @@ In order to calculate the mean silhouette score, silhouette coefficients for all
 Once the coefficient for each sample is calculated, the mean silhouette score for the entire sample is computed. The following table summarises the scores for each cluster size.
 
 
+\begin{table}[]
 \begin{center}
-\begin{tabular}{||c c||} 
- \hline
- Cluster Size & Silhouette Score \\ [0.5ex]
- \hline\hline
- 6 & 0.2904 \\ 
- \hline\hline
- 7 & 0.3033 \\ 
- \hline
- 8 & 0.3005 \\
- \hline
- 9 & 0.3092 \\
- \hline
- 10 & 0.3044 \\ [1ex] 
- \hline
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Cluster Size} & \textbf{Silhouette Score} \\ \hline
+6                     & 0.2904                    \\ \hline
+7                     & 0.3033                    \\ \hline
+8                     & 0.3005                    \\ \hline
+9                     & 0.3092                    \\ \hline
+10                    & 0.3044                    \\ \hline
 \end{tabular}
+\caption{Silhouette score comparison for each cluster size.}
+\label{table:Silhouette Score}
 \end{center}
+\end{table}
 
-At face value it appears that a cluster size of nine is the optimum cluster size given that this produces the largest silhouette score. However upon closer examination it was concluded that a cluster size of ten is more suitable under the essential constraint that P Cygni and inverse P Cygni spectra should be adequately separated from other clusters. Thus, the spectra that belong to each cluster for both nine clusters and ten clusters were plotted. For nine clusters, while a P Cygni only cluster was discovered, a cluster containing inverse P Cygni spectra was not discovered. However for ten clusters, two clear clusters of P Cygni and inverse P Cygni spectra were discovered.
+At face value it appears that a cluster size of nine is the optimum cluster size given that this produces the largest silhouette score. However upon closer examination it was concluded that a cluster size of ten is more suitable under the essential constraint that P Cygni and inverse P Cygni spectra should be adequately separated from other clusters. Thus, the spectra that belong to each cluster for both nine clusters and ten clusters were plotted. For nine clusters, while a P Cygni only cluster was discovered, a cluster containing inverse P Cygni spectra was not discovered. However for a cluster size of ten, two clear clusters of P Cygni and inverse P Cygni spectra were discovered.
 
 \begin{figure}[h]
 \centering
@@ -162,6 +160,27 @@ The inverse P Cygni cluster contains an outlier. This will be discussed further 
 \includegraphics[scale=0.45]{figures/inverse p cygni.png}
 \caption{63 Inverse P Cygni spectra identified using clustering.}
 \end{figure}
+
+Eight other clusters with various emission line morphologies such as double peak were also discovered. A full gallery of these classes is presented in the appendix. Given the silhouette score, it is possible that some P Cygni and inverse P Cygni spectra may have been mis-classified and included in other classes. This can be addressed by further sub-clustering and classification of spectra via a second pass of the scheme above. However this research did not progress with multiple passes of this method due to time constraints. 
+
+A sub classification of the P Cygni and inverse P Cygni classes discovered in this process is presented in Chapter 5 where these results are compared to t-SNE. The merits and demerits of this approach compared to t-SNE is discussed extensively in this chapter. 
+
+\section{Line Fitting}
+
+The P Cygni and inverse P Cygni spectra thus classified were modeled using a double Gaussian with an offset for one of the Gaussian functions \cite{traven2015gaia}\cite{traven2017galah}\cite{zhang2021catalog}. This mixture model with two Gaussians can be used to fit the line profile of P Cygni and inverse P Cygni spectra. Given that there are 102 P Cygni spectra that require fitting, this research adopts a semi-automated method where the initial guesses for the model parameters were driven by the data. 
+
+This research utilised the popular Python based numerical optimisation package, \texttt{scipy.optimize} to generate fitted models for the P Cygni and inverse P Cygni spectra.
+
+The double Gaussian was defined as, 
+
+\begin{equation}
+    f(x) = \frac{1}{\sigma_1\sqrt{2\pi}} 
+  \exp\left( -\frac{1}{2}\left(\frac{x-\mu_1}{\sigma_1}\right)^{\!2}\,\right) + \frac{1}{\sigma_2\sqrt{2\pi}} 
+  \exp\left( -\frac{1}{2}\left(\frac{x-\mu_2}{\sigma_2}\right)^{\!2}\,\right) + C
+\end{equation}
+
+This seven parameter model contains and offset parameter $C$ to account for the inverted Gaussian required to model the absorption trough/line of the P Cygni and inverse P Cygni spectra. 
+
 
 
 
