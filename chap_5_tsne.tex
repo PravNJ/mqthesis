@@ -1,0 +1,65 @@
+\chapter{Evaluation of t-SNE for H$\alpha$ Emission Candidate Selection}
+
+\section{Introduction to t-SNE}
+
+t-distributed stochastic neighbour embedding, or t-SNE is a dimensionality reduction technique \cite{van2008visualizing} that can be used to map higher dimensional data to a two dimensional plane. This t-SNE map can the be used to cluster and classify similar data points into groups and classes using clustering techniques such as DBSCAN. Often, similar objects will be in close proximity to each other in the lower dimensional space. However, this is not guaranteed. In particular, this similarity measure may not be sensitive to morphological differences in the spectra. Thus, the use of t-SNE must be carefully evaluated if it is to be used as an H$\alpha$ emission candidate selection subroutine as proposed by work such as Traven et al. \cite{traven2017galah}.
+
+Thus DR3 spectra of high dimensionality, can be mapped to a two dimensional representation in order to overcome the curse of dimensionality. If it can be assumed that relevant features in the higher dimensional representation that are common to H$\alpha$ emission candidates are preserved during the mapping from higher dimensions to two dimensions, then this fact can be used to segment H$\alpha$ emission candidates into a distinct class. This class can then be used as a starting point for further analysis using the DTW pipeline demonstrated in chapter 4. 
+
+t-SNE has been used successfully in the past to separate and segment a subset of H$\alpha$ emission candidates in the GALAH survey \cite{traven2017galah}. This study isolated 215 H$\alpha$ and H$\beta$ candidates from a prior GALAH data release of approximately 300,000 spectra. 
+
+However, the preservation of features from high dimensions to two dimensions such that H$\alpha$ emission candidates can be meaningfully separated from normal or average spectra is not guaranteed. The pipeline for P Cygni and inverse P Cygni detection presented in chapter 4 relies on a meaningful and confident selection of H$\alpha$ emission candidates from the GALAH survey prior to the application of DTW and clustering. In subsequent sections, this chapter will demonstrate that t-SNE may not be a sufficiently robust technique to serve as the H$\alpha$ emission candidate selection step that is critical for the DTW based framework presented in chapter 4.
+
+\subsection{Mathematical foundations of t-SNE}
+
+This section presents a brief mathematical introduction to t-SNE adapted from Traven et al. \cite{traven2017galah}. A more detailed discussion is found in Van der Maaten and Hinton \cite{van2008visualizing}. 
+
+Consider $N$ spectra where each spectrum is a higher dimensional object $x_i$. The low dimensional representation of this data is achieved by the optimal positioning of data points in the lower dimensional projection map. In order to achieve this, the t-SNE process defines a similarity between data points in the original higher dimensional space $X$ and in the lower dimensional project space, (2-dimensional for the purpose of this work) $Y$. These are described by the symmetric joint-
+probability distributions $P$ and $Q$, respectively
+
+The pairwise similarity between data points $x_i$ and $x_j$ is modeled by the probability that one data point would pick another data point as it's neighbour. This depends on the probability density under a Gaussian in space $X$ while a Student's t-distribution is used in space $Y$. t-SNE first computes probabilities $p_i_j$ that are proportional to the similarity of spectra $x_i$ and $x_j$ as follows,
+
+
+For $i$ $\neq$ $j$,
+
+\begin{equation}
+p_{j\mid i}={\frac {\exp(-\lVert \mathbf {x} _{i}-\mathbf {x} _{j}\rVert ^{2}/2\sigma _{i}^{2})}{\sum _{k\neq i}\exp(-\lVert \mathbf {x} _{i}-\mathbf {x} _{k}\rVert ^{2}/2\sigma _{i}^{2})}}
+\end{equation}
+
+Note that $p_{i\mid i}=0$ and $\sum _{j}p_{j\mid i}=1$ for all $i$. Now define,
+
+\begin{equation}
+    p_{ij}={\frac {p_{j\mid i}+p_{i\mid j}}{2N}}
+\end{equation}
+
+and note that $p_i_j=p_j_i$, $p_i_i=0$ and $\sum _{ij} p_i_j=1$
+
+The bandwidth of the Gaussian distribution $\sigma_i$ is set such that the perplexity of the conditional distribution equals a predefined perplexity. This perplexity is a user defined quantity and is considered a hyper-parameter of this method. This implies that the bandwidth is adapted to the density of the data, Smaller values of $\sigma_i$ are thus used in denser parts of the data space $X$. 
+
+Next, t-SNE will attempt to learn a lower dimensional map with objects $y_i$ in $Y$ that reflect the similarities $p_i_j$ computed above as well as possible. The process measures similarities $q_i_j$ between two points $y_i$ and $y_j$ using a similar approach. 
+
+For $i$ $\neq$ $j$,
+
+\begin{equation}
+    q_{ij}={\frac {(1+\lVert \mathbf {y} _{i}-\mathbf {y} _{j}\rVert ^{2})^{-1}}{\sum _{k}\sum _{l\neq k}(1+\lVert \mathbf {y} _{k}-\mathbf {y} _{l}\rVert ^{2})^{-1}}}
+\end{equation}
+
+Here $q_i_i=0$ and the t-distribution with one degree of freedom is used to measure similarities between the lower dimensional points. Thus, dissimilar objects will be projected further apart on the map $Y$.
+
+In order to determine the locations $y_i$ on the map $Y$, the non symmetric Kullback–Leibler divergence shown below is minimized using gradient descent. The result of this optimization scheme is a lower dimensional map of the spectral data.
+
+\begin{equation}
+    \mathrm {KL} \left(P\parallel Q\right)=\sum _{i\neq j}p_{ij}\log {\frac {p_{ij}}{q_{ij}}}
+\end{equation}
+
+\section{Applying t-SNE to classify H$\alpha$ emission candidates}
+
+This research used an identical approach to Traven et al. on DR3 data to attempt to isolate, cluster and classify potential H$\alpha$ candidates. Such candidates can then be subjected to the pipeline proposed in chapter 4. The first step of this approach involves using t-SNE to dimensionally reduce spectra to a 2-dimensional t-SNE map. The spectra were masked to select the H$\alpha$ region only \cite{traven2017galah}. The perplexity parameter was set to 30 as this provided reasonable separation of classes in Traven et al.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.16]{figures/t-sne halpha masked.png}
+\caption{t-SNE map for all spectra in DR3. Note that only the region around H$\alpha$ was used to generate this map. The $x$ and $y$ axes contain physically meaningless quantities.}
+\end{figure}
+
+While some clusters are visible to the naked eye, this research followed the t-SNE map generation with DBSCAN clustering. Density based spatial clustering of applications with noise, or DBSCAN is a clustering algorithm that relies on a density based notion of clusters. It is an unsupervised method that can be used to discover clusters within a space. In this case, this space is a 2-dimensional t-SNE map. 

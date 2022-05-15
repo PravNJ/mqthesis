@@ -167,21 +167,48 @@ A sub classification of the P Cygni and inverse P Cygni classes discovered in th
 
 \section{Line Fitting}
 
-The P Cygni and inverse P Cygni spectra thus classified were modeled using a double Gaussian with an offset for one of the Gaussian functions \cite{traven2015gaia}\cite{traven2017galah}\cite{zhang2021catalog}. This mixture model with two Gaussians can be used to fit the line profile of P Cygni and inverse P Cygni spectra. Given that there are 102 P Cygni spectra that require fitting, this research adopts a semi-automated method where the initial guesses for the model parameters were driven by the data. 
+The P Cygni and inverse P Cygni spectra thus classified were modeled using a double Gaussian with an offset for one of the Gaussian functions \cite{traven2015gaia}\cite{traven2017galah}\cite{zhang2021catalog}. This mixture model with two Gaussians can be used to fit the line profile of P Cygni and inverse P Cygni spectra. Given that there are 102 P Cygni spectra that require fitting, this research adopts a semi-automated method where the initial guesses for the model parameters were driven by the data, notably the use of minimum and maximum local flux values to set both the amplitude and mid value of each peak and trough. Further details can be found in the appendix.
 
-This research utilised the popular Python based numerical optimisation package, \texttt{scipy.optimize} to generate fitted models for the P Cygni and inverse P Cygni spectra.
+This research utilised the popular Python based numerical optimisation package, \texttt{scipy.optimize} to generate fitted models for the P Cygni and inverse P Cygni spectra using non-linear least squares.
 
-The double Gaussian was defined as, 
+The Gaussian mixture model is defined as, 
 
 \begin{equation}
-    f(x) = \frac{1}{\sigma_1\sqrt{2\pi}} 
-  \exp\left( -\frac{1}{2}\left(\frac{x-\mu_1}{\sigma_1}\right)^{\!2}\,\right) + \frac{1}{\sigma_2\sqrt{2\pi}} 
+    f(x) = \frac{A}{\sigma_1\sqrt{2\pi}} 
+  \exp\left( -\frac{1}{2}\left(\frac{x-\mu_1}{\sigma_1}\right)^{\!2}\,\right) + \frac{B}{\sigma_2\sqrt{2\pi}} 
   \exp\left( -\frac{1}{2}\left(\frac{x-\mu_2}{\sigma_2}\right)^{\!2}\,\right) + C
 \end{equation}
 
-This seven parameter model contains and offset parameter $C$ to account for the inverted Gaussian required to model the absorption trough/line of the P Cygni and inverse P Cygni spectra. 
 
+This seven parameter model contains an offset parameter $C$ to account for the inverted Gaussian required to model the absorption trough/line of the P Cygni and inverse P Cygni spectra. The parameters A and B are to account for the respective amplitudes of the emission and absorption lines. The uncertainties of this fit can be modelled more accurately within a Bayesian framework and the use of MCMC estimation. However this is beyond the scope of this work \cite{hogg2010data}.
 
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{figures/p cugni fitted.png}
+\caption{A Gaussian mixture model fit of one of the identified P Cygni spectra.}
+\end{figure}
+
+The process can be repeated for each P Cygni spectrum discovered by clustering. Below are a few examples of these fitted models. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{figures/p cygni fitted 2.png}
+\caption{A Gaussian mixture model fit for sobject ID 140117002101365. }
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{figures/p cygni fitted 3.png}
+\caption{A Gaussian mixture model fit for sobject ID 140414005101301. }
+\end{figure}
+
+This process was also extended to the inverse P Cygni spectra. A few examples are provided below. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{figures/inverse p cygni 1.png}
+\caption{A Gaussian mixture model fit of one of the identified inverse P Cygni spectra. }
+\end{figure}
 
 
 
