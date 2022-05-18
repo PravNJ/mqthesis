@@ -100,4 +100,46 @@ Note that the representation is significantly simpler compared to the prior appl
 \caption{t-SNE map for H$\alpha$ candidates identified by Čotar et al. labelled based on DTW based clustering.}
 \end{figure}
 
-Here the P Cygni candidates are represented by cluster 8 and by the colour lime-green while the inverse P Cygni spectra are represented by cluster 9 and the colour teal. Note that cluster 8 appears in two physically separate regions of the t-SNE map and as does cluster 9. Thus it is clear that the application of t-SNE on the H$\alpha$ candidates identified by Čotar et al. does not meaningfully separate P Cygni and inverse P Cygni spectra into distinct regions of the t-SNE map.
+Here the P Cygni candidates are represented by cluster 8 and by the colour olive while the inverse P Cygni spectra are represented by cluster 9 and the colour cyan. Note that cluster 8 appears in two physically separate regions of the t-SNE map and as does cluster 9. Thus it is clear that the application of t-SNE on the H$\alpha$ candidates identified by Čotar et al. does not meaningfully separate P Cygni and inverse P Cygni spectra into distinct regions of the t-SNE map. For morphology based classification, the DTW based method outlined in chapter 4 outperforms the t-SNE based classification.
+
+\subsection{Examination of the P Cygni cluster}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.14]{figures/t-sne p cygni only.png}
+\caption{t-SNE map highlighting P Cygni cluster.}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.45]{figures/pcygni.png}
+\caption{P Cygni spectra identified using DTW based clustering in the H$\alpha$ candidate dataset released by Čotar et al.}
+\end{figure}
+
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.45]{figures/spectra less than 40.png}
+\caption{P Cygni spectra where t-SNE region is 0<y<40. }
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.45]{figures/spectra greater than 40.png}
+\caption{P Cygni spectra where t-SNE region is 40<y<70. }
+\end{figure}
+
+A closer examination of the P Cygni clusters reveals two regions on the t-SNE map that are sufficiently far apart. The P Cygni candidates in these regions were examined in further detail in order to determine which feature the t-SNE process was selecting for this distinct region separation. This research split the regions along the y axis into two groups, $0<y<40$ and $40<y<70$ . Once these cuts were made, the spectra from each region were plotted on the same wavelength grid. 
+
+The results indicate that while t-SNE may not be able to separate H$\alpha$ emission candidates based on morphology as effectively as DTW based clustering, the 2-dimensional t-SNE space is able to discriminate based on features such as the wavelength at which the maximum flux is observed. This behaviour can be important for future feature engineering when reducing higher dimensional data to 2-dimensional maps such as t-SNE. This research hypothesises that it is likely that a 2-dimensional representation of a high resolution and higher dimensional spectrum introduces significant compression such that the features that contribute to morphology of P Cygni and inverse P Cygni spectra are no longer meaningfully represented.
+
+\section{Concluding remarks}
+
+t-SNE has proved extremely useful in the classification of high resolution spectra from the GALAH Survey. While some progress has been made in using this method to cluster and classify H$\alpha$ emission candidates \cite{traven2017galah} it appears that more fine tuned methods such as those discussed in Čotar et al perform better on this task \cite{vcotar2021galah}.
+
+Secondly, for clustering and classification of P Cygni and inverse P Cygni spectra, it appears that t-SNE may not be sufficiently sensitive to the morphology of these spectra and thus performs sub-optimally in grouping P Cygni spectra and inverse P Cygni spectra into distinct clusters on the t-SNE map. 
+
+Thirdly, this research can hypothesise that some higher dimensional information such as the peak wavelength (wavelength at which maximum flux occurs) has been preserved in the lower dimensional representation of P Cygni spectra and thus can perform a minor discriminatory role in the sub classification of P Cygni spectra based on the location of the maximum flux. This may prove useful in future research, particularly in the context of feature engineering when taking other machine learning approaches. 
+
+Finally, t-SNE could be a robust methodology for applications and problems where maximum (or minimum) flux plays a more discriminatory role than the morphology of the spectrum while a DTW based approach may be more suitable for the inverse case such as P Cygni and inverse P Cygni identification.
+
