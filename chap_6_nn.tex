@@ -1,0 +1,62 @@
+\chapter{Data Driven Classification of P Cygni and
+Inverse P Cygni Spectra with Autoencoders and DTW}
+
+\section{A Brief Recap}
+
+The following conclusions can be drawn from the results presented in the preceding chapters,
+
+\begin{enumerate}
+    \item The curse of dimensionality presents a significant challenge when working with high resolution data from million star surveys such as GALAH DR3. 
+    \item While popular,  dimensionality reduction techniques such as t-SNE may not be sufficiently robust at clustering emission line candidates from non-emission line candidates. Furthermore, the 2-dimensional t-SNE representation was not sensitive to the morphological differences between non-emission line spectra and emission line spectra such as P Cygni and inverse P Cygni spectra.
+    \item Given a dataset with emission line candidates, DTW based aggolomerative clustering and classification can be used effectively to classify P Cygni and inverse P Cygni in DR3 based on their morphologies.
+\end{enumerate}
+
+This chapter builds on these conclusions to present an end P Cygni and inverse P Cygni detection pipeline which utilises normalised, resampled DR3 spectra. A key component of this pipeline was demonstrated in chapter 4 and forms the basis of the final step that separates P Cygni and inverse P Cygni spectra from DR3. 
+
+\section{Autoencoders for H$\alpha$ Candidate Selection}
+
+An autoencoder capable of detecting H$\alpha$ emission spectra was presented in chapter 3 \cite{vcotar2021galah}. This work adapts this approach and exploits it as a pre-processing step prior to the application of DTW based agglomerative clustering. Čotar et al. developed an autoencoder which can learn the latent space representation of non-emission line spectra. 
+
+This latent space represents each higher dimensional (~4500) high resolution spectrum as a 5-dimensional vector. The autoencoder (neural-network) thus trained is then fed the total DR3 dataset such that it generates predictions for each spectrum. For non-emission line spectra, the predicted spectra will match the data more accurately than for emission line spectra. The flux difference between a predicted spectrum and it's original data counterpart can be exploited to flag emission line stars.
+
+\subsection{Autoencoder Architecture and Training}
+
+This work builds on work by Čotar et al. which was introduced in chapter 3 and creates a similar autoencoder architecture where high resolution spectra of dimension X was mapped to a 5-dimensional latent space. The popular deep-learning frameworks \texttt{tensorflow} and \texttt{keras} were used to develop the autoencoder.
+
+Each successive dense layer reduces the dimensionality of X by Y. PReLU was chosen as the non-linear activation method for each layer. The loss is minimised using the Adam optimiser which is a popular and robust gradient descent methodology. 
+
+<insert network diagram here>
+
+Čotar et al. recommends inverting the flux values (1 - normalised flux) prior to training and prediction. Greater training stability was achieved by this inversion. Furthermore, they recommend an epoch size of 350 and a batch size of 40,000 spectra. This work follows the same conventions. 10\% of the samples were selected as the validation set. 
+
+For training, the autoencoder requires a training set that's either heavily biased towards non-emission line spectra around H$\alpha$ or contains non-emission line spectra exclusively. In order to select these spectra in DR3, this work uses the quality criteria recommended by Čotar et al., Buder et al. \cite{buder2021galah+} and Kos et al. \cite{kos2017galah}. 
+
+While these criteria cannot fully guarantee that the autoencoder will be trained on non-emission line spectra exclusively, prior work by Čotar et al. indicate that they are sufficiently robust for the purpose of training the network. The Data Central SQL/ADQL catalogue query service was used to retrieve object IDs that matched these criteria.
+
+\begin{lstlisting}[language=SQL]
+SELECT sobject_id
+FROM   galah_dr3.main_star
+WHERE  snr_c3_iraf > 30
+       AND red_flag = 0
+       AND flag_sp < 16 
+\end{lstlisting}
+
+\begin{table}[!htb]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Criterion}    & \textbf{Rationale}                                                                 \\ \hline
+SNR \textgreater 30   & Spectra are not contaminated with peaky effects e.g. atmospheric effects      \\ \hline
+\texttt{red\_flag} = 0         & Spectra that have no know reduction issues                                  \\ \hline
+\texttt{flag\_sp} \textless 16 & Spectra that do not include known emission line spectra identified by t-SNE \\ \hline
+\end{tabular}
+\caption{Selection criteria for non-emission line spectra for training purposes.}
+\label{table:Selection Criteria}
+\end{center}
+\end{table}
+
+This query resulted in X spectra. The red arm data of these objects were then resampled  to a common wavelength grid as per the scheme outlined previously in chapter 2. The normalised flux was then inverted and used as the training dataset. The training results are as follows.
+
+<insert training loss>
+
+The prediction error for training is computed as a sum of all absolute differences between the input and output data set. Figure X shows the prediction error of the training process as a function of epoch. A
