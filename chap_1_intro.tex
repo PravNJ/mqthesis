@@ -1,12 +1,30 @@
-\begin{savequote}[45mm]
-The new star in Cygnus that I first observed on August 8, 1600, was initially of third magnitude. I determined its position by measuring its distance from Vega and Albireo.
-\qauthor{Willem Janszoon Blaeu}
-\end{savequote}
-
 \chapter{Introduction}
+\section{The Data Deluge in Modern Spectroscopic Surveys}
+Modern large scale spectroscopic surveys generate hundreds of thousands or even millions of spectra. The analysis of these high volume data-sets presents a significant challenge to the researcher as well as to compute infrastructure and engineering. Additionally, if the data is collected by a high resolution instrument, the researcher will face the challenge of wrangling and analysing individual data points with dimensions at the scale of several thousands per spectrum \cite{buder2021galah+}. 
+When the number of data points are of the order of hundreds of thousands (or millions) and when each data point has a dimensionality of several thousands, it becomes impractical and perhaps even infeasible to process and analyse this data using manual methods such as naked eye observations of spectral plots. Unless the science goals have been set to bias a survey specifically towards star forming regions (for example) \cite{traven2015gaia}, these surveys will contain a significant majority of spectra that are presumably typical. Thus the identification and classification of atypical objects such as emission-line stars for example, presents a serious challenge in addition to those mentioned previously.
+
+\begin{table}[]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Survey} & \textbf{Number of Spectra} & \textbf{Resolution} \\ \hline
+Gaia ESO        & $\sim$150,000              & High                \\ \hline
+LAMOST          & $\sim$10,000,000           & Low                 \\ \hline
+APOGEE          & $\sim$250,000              & High                \\ \hline
+RAVE            & $\sim$600,000              & High                \\ \hline
+GAIA            & $\sim$100,000,000          & Low                 \\ \hline
+\end{tabular}
+\caption{Modern spectroscopic surveys generate high volume, and often high resolution data.}
+\label{table:draglift1}
+\end{center}
+\end{table}
+
+These surveys use data analysis pipelines to generate stellar parameters and often use template spectra that are typical. It has been demonstrated that the use of these so called non-peculiar baselines can impact the accurate determination of effective temperature \cite{cayrel2011halpha}\cite{amarsi2018effective}\cite{giribaldi2019accurate} as well as stellar mass \cite{ness2016spectroscopic}\cite{bergemann2016gaia}. In addition to providing significant insight into stellar evolutionary pathways, the identification of atypical emission-line stars can thus improve the accurate determination of stellar parameters. To achieve this outcome, once identified and classified, these spectra can be removed from the primary data analysis pipeline containing typical spectra and can be reduced by secondary pipelines more suited for their peculiarities. 
+The detection of atypical signals or data points in significantly larger more typical populations of data presents itself well to modern machine learning techniques. To-date, a variety of machine-learning techniques have been applied to the identification of emission-line stars and in particular H$\alpha$ emission-line stars . However, major drawbacks and challenges remain both in the identification and classification of emission-line stars despite the use of popular and seemingly robust machine learning techniques such as dimensionality reduction, k-means clustering and neural networks. Given these drawbacks, it is not uncommon that manual methods are still being used for identification and classification of emission-line stars \cite{zhang2021catalog}. A more detailed review of these efforts are presented in Chapter 3. 
+
+
 
 \section{P Cygni Stars}
-
 P Cygni (or 34 Cygni) is a luminous blue variable star (LBV) that has been studied extensively \cite{1953PDAO....9....1B, hutchings1969expanding, elliott20225, underhill1966supergiants,mizumoto2018newly}. Willem Janszoon Blaeu, a Dutch cartographer and student of the astronomer Tycho Brahe is considered to have provided the first known set of observations of 34 Cygni in the year 1600 \cite{deGrootPCygni}. The stellar spectrum of 34 Cygni is peculiar. It exhibits the characteristics of a B type supergiant except that almost all absorption lines are blue shifted with a red shifted emission component \cite{hutchings1969expanding}. This characteristic line profile can be clearly observed in proximity to the H$\alpha$ line which is placed at \textasciitilde 6563\r{A} \cite{zhang2021catalog,traven2015gaia}
 
 P Cygni type stars or simply, \emph{P Cygni stars} are stars that exhibit line profiles that are similar to the characteristic profile of 34 Cygni. The spectra of these stars show characteristic absorption, emission and wide absorption sub-components \cite{zhang2021catalog}. The red shifted absorption (or blue shifted emission) counterpart to P Cygni stars have also been observed. These now belong to a class of objects known as the Inverted P Cygni stars or \emph{Inverse P Cygni stars}. 
@@ -34,7 +52,6 @@ The P Cygni line profile observed is thus a result of an expanding shell of gas 
 \end{figure}
 
 \section{Morphological Classification}
-
 One of the first modern attempts at identifying and characterising P Cygni stars was by Beals (1953) \cite{1953PDAO....9....1B}. This work compiled Northern Hemisphere observations of P Cygni stars into a comprehensive catalog. This catalog was compiled by examining spectra using the naked eye, during a period of observation between the years 1928 and 1946. The catalog was then used to generate hypotheses of how P Cygni stars may exchange material with their surroundings via accretions, inflows and outflows. The morphological properties of the spectra were then used to calculate the wind velocities of inflows and outflows. 
 
 \begin{figure}[t]
@@ -54,27 +71,12 @@ Classification regimes since the 1950s have largely been manual i.e. visual insp
 \end{figure}
 
 \section{Importance}
+
 The identification, classification and modelling of peculiar stars such as P Cygni and inverse P Cygni can provide significant insight into our understanding of stellar evolution and the physical processes that drive them. With the advent of modern large scale spectroscopic survey science, the importance of detecting these stars and modelling them using data driven methods has gained prominence.
 
 Modern spectroscopic surveys generate data from millions of sources. These "million star surveys" generate a significant volume of data. Thus, it has become impractical to study these sources using manual methods. In order to generate stellar parameters from survey spectra, modern researchers rely on generalised automated pipelines. These generalised pipelines rely on templates and models that assume a non-peculiar baseline. 
 
 It has been demonstrated that such an approach has an impact on the accurate determination of effective temperature \cite{cayrel2011halpha}\cite{amarsi2018effective}\cite{giribaldi2019accurate}. The effect on computing stellar masses has also been well documented \cite{ness2016spectroscopic}\cite{bergemann2016gaia}. Thus the identification and characterisation of peculiar stars such as P Cygni and inverse P Cygni stars has a direct impact on the accuracy of automated estimation of stellar parameters in large scale spectroscopic surveys. 
-
-\begin{table}[]
-\begin{center}
-\begin{tabular}{|c|c|c|}
-\hline
-\textbf{Survey} & \textbf{Number of Spectra} & \textbf{Resolution} \\ \hline
-Gaia ESO        & $\sim$150,000              & High                \\ \hline
-LAMOST          & $\sim$10,000,000           & Low                 \\ \hline
-APOGEE          & $\sim$250,000              & High                \\ \hline
-RAVE            & $\sim$600,000              & High                \\ \hline
-GAIA            & $\sim$100,000,000          & Low                 \\ \hline
-\end{tabular}
-\caption{Modern spectroscopic surveys generate high volume, and often high resolution data that are analysed by automated pipelines.}
-\label{table:draglift1}
-\end{center}
-\end{table}
 
 \section{The GALAH Survey}
 

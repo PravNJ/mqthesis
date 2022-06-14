@@ -54,7 +54,7 @@ WHERE  snr_c3_iraf > 30
 \begin{tabular}{|l|l|}
 \hline
 \textbf{Criterion}    & \textbf{Rationale}                                                                 \\ \hline
-SNR \textgreater 30   & Spectra have reduced noise contamination e.g. atmospherics      \\ \hline
+SNR \textgreater 30   & Spectra have reduced noise contamination      \\ \hline
 \texttt{red\_flag} = 0         & Select spectra that have no know reduction issues                                  \\ \hline
 \texttt{flag\_sp} \textless 16 & Select spectra that do not include known emission line spectra identified by t-SNE \\ \hline
 \end{tabular}
@@ -101,11 +101,38 @@ The equivalent width within the range 6561\r{A} - 6565\r{A} was determined using
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[scale=0.45]{figures/EW hist.png}
+\includegraphics[scale=0.50]{figures/EW hist.png}
 \caption{The equivalent width (EW) distribution of the inverted difference spectra of the emission line candidates identified by the autoencoder. Here EW > 0.25.}
 \end{figure}
 
 \section{DTW Based Agglomerative Hierarchical Clustering}
 
-The next step in the analysis pipeline is identical to the methodology introduced in Chapter 4. DTW distances were calculated for the emission line spectra and agglomerative hierarchical clustering was used to 
+The next step in the analysis pipeline is identical to the methodology first introduced in Chapter 4. DTW distances were calculated for the emission line spectra and agglomerative hierarchical clustering was used to cluster and classify P Cygni and inverse P Cygni spectra. In addition to these clusters, eight other clusters were observed. Further details are provided in the Appendix.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.45]{figures/dtw distances dr3.png}
+\caption{Pairwise DTW distances for emission line spectra identified in DR3. Darker colours indicate samples that are dissimilar.}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.60]{figures/dtw distances dr3 zoomed.png}
+\caption{Pairwise DTW distances for emission line spectra identified in DR3. Darker colours indicate samples that are dissimilar (zoomed).}
+\end{figure}
+
+Using this methodology, this work identified 33 P Cygni spectra and 85 inverse P Cygni spectra. Ensemble plots of these spectra are provided below.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.45]{figures/p cygni ensemble.png}
+\caption{P Cygni spectra identified. Note that one outlier is present in this cluster.}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.45]{figures/inverse p cygni ensemble.png}
+\caption{The cluster of inverse P Cygni spectra.}
+\end{figure}
+
 
