@@ -1,5 +1,4 @@
-\chapter{Data Driven Classification of P Cygni and
-Inverse P Cygni Spectra with Autoencoders and DTW}
+\chapter{Data Driven Classification of Emission-line Spectra}
 
 \section{A Brief Recap}
 
@@ -8,18 +7,18 @@ The following conclusions can be drawn from the results presented in the precedi
 \begin{enumerate}
     \item The curse of dimensionality presents a significant challenge when working with high resolution data from million star surveys such as GALAH DR3. 
     \item While popular,  dimensionality reduction techniques such as t-SNE may not be sufficiently robust at identifying emission line spectra. Furthermore, the 2-dimensional t-SNE representation may not be sensitive to the morphological differences between emission line spectra and non-emission line spectra.
-    \item Given a data set with emission line spectra, DTW based aggolomerative hierarchical clustering can be used effectively to identify P Cygni and inverse P Cygni spectra.
+    \item Given a data set with emission line spectra, DTW based aggolomerative hierarchical clustering can be used effectively to identify P Cygni, inverse P Cygni and other emission-line spectra.
 \end{enumerate}
 
-This chapter builds on these conclusions and presents a proof of concept P Cygni and inverse P Cygni identification pipeline. DTW based agglomerative hierarchical clustering, which  was introduced in chapter 4, forms the basis of this pipeline. Furthermore, this pipeline relies on the pre-selection of H$\alpha$ emission line spectra using an autoencoder first introduced by Čotar et al.
+This chapter builds on these conclusions and presents a proof of concept pipeline for the identification and classification of emission-line spectra. DTW based agglomerative hierarchical clustering, which  was introduced in Chapter 4, forms the basis of this pipeline. Furthermore, this pipeline relies on the pre-selection of H$\upalpha$ emission-line spectra using an autoencoder first introduced by Čotar et al.
 
-\section{Autoencoders for H$\alpha$ Emission Line Spectra Selection}
+\section{Selecting H$\upalpha$ Emission-line Spectra}
 
-Chapter 3 presented an autoencoder neural network that is capable of identifying H$\alpha$ emission line spectra \cite{vcotar2021galah}. This work adapts this approach and exploits it as a pre-processing step prior to the application of DTW based agglomerative hierarchical clustering. The methodology is as follows.
+Chapter 3 presented an autoencoder neural network that is capable of identifying H$\upalpha$ emission line spectra \cite{vcotar2021galah}. This work adapts this approach and exploits it as a pre-processing step prior to the application of DTW based agglomerative hierarchical clustering. The methodology is as follows.
 
-This autoencoder learns the latent space representation of non-emission line spectra but does not learn the latent space representation of emission line spectra accurately. This latent space represents each higher dimensional high resolution spectrum as a 5-dimensional vector. This process is known as encoding. Once the training phase is completed, the autoencoder was fed the total DR3 data set such that it generates predictions for each spectrum. This process is known as decoding. 
+This autoencoder learns the latent space representation of non-emission line spectra but \emph{does not} learn the latent space representation of emission line spectra accurately. This latent space represents each higher dimensional high resolution spectrum as a 5-dimensional vector. This process is known as encoding. Once the training phase is completed, the autoencoder was fed the total DR3 data set such that it generates predictions for each spectrum. This process is known as decoding. 
 
-The training data is deliberately biased towards non-emission line spectra (so-called normal spectra). Thus for non-emission line spectra, the predicted spectra will match the data more accurately than for emission line spectra. The flux difference between a predicted spectrum and it's observed (original) data counterpart can be exploited to flag emission line stars. This flagging can be accomplished by computing the equivalent width of this "difference spectrum" around the H$\alpha$ line.
+The training data is deliberately biased towards non-emission line spectra (so-called normal or typical spectra). Thus for non-emission line spectra, the predicted spectra will match the data more accurately than for emission line spectra. The flux difference between a predicted spectrum and it's observed (original) data counterpart can be used to flag emission line stars. This flagging can be accomplished by computing the equivalent width of this "difference spectrum" around the H$\upalpha$ line.
 
 \subsection{Autoencoder Architecture and Training}
 
@@ -37,9 +36,9 @@ connections to neighboring layers.}
 
 Čotar et al. recommends inverting the flux values (1 - normalised flux) prior to training and prediction. Greater training stability was achieved by this inversion. Furthermore, they recommend an epoch size of 350 and a batch size of 40,000 spectra. 10\% of the samples were selected as the validation set. This work follows the same conventions. 
 
-For training, the autoencoder requires a training set that's either significantly biased towards non-emission line spectra around H$\alpha$ or contains non-emission line spectra exclusively. In order to select these spectra in DR3, this work uses the quality criteria recommended by Čotar et al.\cite{vcotar2021galah}, Buder et al.\cite{buder2021galah+} and Kos et al.\cite{kos2017galah}. 
+For training, the autoencoder requires a training set that's either significantly biased towards non-emission line spectra around H$\upalpha$ or contains non-emission line spectra exclusively. In order to select these spectra in DR3, this work uses the quality criteria recommended by Čotar et al.\cite{vcotar2021galah}, Buder et al.\cite{buder2021galah+} and Kos et al.\cite{kos2017galah}. 
 
-While these criteria cannot fully guarantee that the autoencoder will be trained on non-emission line spectra exclusively, prior work by Čotar et al. indicate that they are sufficiently robust for the purpose of training the network. The Data Central SQL/ADQL catalogue query service was used to retrieve GALAH DR3 \texttt{sobject\_id} values that matched these criteria.
+While these criteria cannot fully guarantee that the autoencoder will be trained on non-emission line spectra exclusively, prior work by Čotar et al. indicate that they are sufficiently robust for the purpose of training the network. The Data Central SQL/ADQL catalogue query service was used to retrieve GALAH DR3 \texttt{sobject\_id} values that matched these criteria. Namely,
 
 \begin{lstlisting}[language=SQL]
 SELECT sobject_id
@@ -71,15 +70,15 @@ This query returned 396,338 spectra. The red arm data was re-sampled to a common
 \caption{Prediction accuracy of the red arm training dataset at different training epochs.}
 \end{figure}
 
-The prediction error for training is computed as a sum of all absolute differences between the input and output data set. Figure 6.2 shows the prediction error of the training process as a function of epoch. At face value, it appears that over-fitting has taken place, however this is a desirable feature in the context of detecting emission line spectra as the network must be sufficiently biased towards non-emission line spectra. Furthermore, these results are in agreement with those presented in Čotar et al.
+The prediction error for training is computed as a sum of all absolute differences between the input and output data set. Figure 6.2 shows the prediction error of the training process as a function of epoch. These results are in agreement with those presented in Čotar et al.
 
-It is expected that the autoencoder will perform poorly when attempting to reconstruct or predict emission line spectra/fluxes. Conversely, it is expected that it will perform well on emission line spectra. This behaviour has significant implications for the detection of H$\alpha$ emission candidates.
+It is expected that the autoencoder will perform poorly when attempting to reconstruct or predict emission line spectra/fluxes. Conversely, it is expected that it will perform well on emission line spectra. This behaviour has significant implications for the detection of H$\upalpha$ emission-line spectra wjhich are discussed in the next section.
 
-\section{Prediction and Results}
+\subsection{Decoding and Prediction}
 
 Once the autoencoder was trained, predicted normalised flux of the red arm for each spectrum in DR3 was calculated. Since the input data for training was inverted, all DR3 spectra were inverted prior to input. Thus predicted results from the autoencoder were also inverted.
 
-The difference spectra between the predicted and the original DR3 spectra (observed spectra) were computed. Presented below are the inverted difference spectra for a non-emission line spectrum and a known emission line spectrum in DR3 around H$\alpha$. Note that the non-emission line spectrum produces a difference spectrum with an approximately flat response while the emission line spectrum does not. 
+The difference spectra between the predicted and the original DR3 spectra (observed spectra) were computed. Presented below are the inverted difference spectra for a non-emission line spectrum and a known emission line spectrum in DR3 around H$\upalpha$. Note that the non-emission line spectrum produces a difference spectrum with an approximately flat response while the emission line spectrum does not. 
 
 \begin{equation}
    f_{difference} = f_{observed} - f_{predicted}
@@ -97,42 +96,74 @@ The difference spectra between the predicted and the original DR3 spectra (obser
 \caption{An non-emission line spectrum, the autoencoder prediction and corresponding difference spectrum. Note the flat response of the difference spectrum. This response can be quantified by calculating its equivalent width.}
 \end{figure}
 
-The equivalent width within the range 6561\r{A} - 6565\r{A} was determined using the popular Python packages \texttt{astropy}\cite{astropy:2018}\cite{astropy:2013} and \texttt{specutils}\cite{specutils}. For consistency, these widths were calculated for the inverted difference spectra. Čotar et al. used an equivalent width cut-off of 0.25 to separate emission line spectra from DR3. This work follows the same approach. The histogram of equivalent widths of the 6,093 spectra thus obtained was examined and was in agreement with the results from Čotar et al. 
+The equivalent width within the range 6561\r{A} - 6565\r{A} was determined using the popular Python packages \texttt{astropy}\cite{astropy:2018}\cite{astropy:2013} and \texttt{specutils}\cite{specutils}. For consistency, these widths were calculated for the inverted difference spectra. Čotar et al. used an equivalent width cut-off of 0.25 to separate emission line spectra from DR3. This work tested the sensitivity of this cut-off parameter. Selecting a lower threshold for this parameter like EW > 0.20 allows for a wider selection of potential H$\upalpha$ emission-line spectra while a higher threshold such as EW > 0.50 may restrict the selection to only the strongest emitters. The rationale for choosing EW > 0.25 in Čotar et al. is presumably based on a trial and error approach. This work took a similar strategy to fine tune this parameter and select a reasonable population of H$\upalpha$ emission-line spectra by setting EW > 0.22. This value provided the best overall performance. However, this cut-off does not guarantee that the maximum number of H$\upalpha$ emission-line spectra is selected. 
+
+Given that Čotar et al. used a different population for their work, the H$\upalpha$ emission-line spectra discovered cannot be directly compared to those found in GALAH DR3 using the method above. It can be noted that only 4556 out of 10,364 objects identified by Čotar et al. were present in GALAH DR3 sample which comprised of 396,338 spectra. These 4556 were also captured and recovered within the H$\upalpha$ emission-line spectra discovered using the autoencoder and setting EW > 0.22. The summary statistics for each sample are provided in the appendix.
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.50]{figures/EW hist.png}
-\caption{The equivalent width (EW) distribution of the inverted difference spectra of the emission line candidates identified by the autoencoder. Here EW > 0.25.}
+\caption{The equivalent width (EW) distribution of the inverted difference spectra of the emission-line spectra identified in GALAH DR3. Here EW > 0.22.}
 \end{figure}
 
-\section{DTW Based Agglomerative Hierarchical Clustering}
 
-The next step in the analysis pipeline is identical to the methodology first introduced in Chapter 4. DTW distances were calculated for the emission line spectra and agglomerative hierarchical clustering was used to cluster and classify P Cygni and inverse P Cygni spectra. In addition to these clusters, eight other clusters were observed. Further details are provided in the Appendix.
+\section{Applying Dynamic Time Warping and Agglomerative Hierarchical Clustering}
+
+Once the H$\upalpha$ emission-line spectra were selected, the data was passed on-to the next step of the analytics pipeline. The DTW distance matrix was computed for each spectrum ensuring that only masked data was presented to the \texttt{FastDTW} algorithm. The masked region being 6561\r{A} - 6565\r{A} \cite{traven2017galah}. As mentioned Chapter 4 this approach reduces run-time and computational complexity. 
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[scale=0.45]{figures/dtw distances dr3.png}
+\includegraphics[scale=0.50]{figures/dtw distances dr3.png}
 \caption{Pairwise DTW distances for emission line spectra identified in DR3. Darker colours indicate samples that are dissimilar.}
 \end{figure}
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[scale=0.60]{figures/dtw distances dr3 zoomed.png}
-\caption{Pairwise DTW distances for emission line spectra identified in DR3. Darker colours indicate samples that are dissimilar (zoomed).}
+\includegraphics[scale=0.50]{figures/dtw distances dr3 zoomed.png}
+\caption{Pairwise DTW distances for emission line spectra identified in DR3 (zoomed). Darker colours indicate samples that are dissimilar.}
 \end{figure}
 
-Using this methodology, this work identified 33 P Cygni spectra and 85 inverse P Cygni spectra. Ensemble plots of these spectra are provided below.
+Once the distance calculation was completed, agglomerative hierarchical clustering was performed ensuring complete linkage. Here, this work deviates from the number of clusters used in Chapter 4. It was noted that the H$\upalpha$ emission-line spectra identified in the previous stage of the pipeline exhibited more complex emission line morphologies than those identified by Čotar et al. 
+
+This richer variety of morphologies can be attributed to the fact that the DR3 population is fundamentally different to the survey data used by Čotar et al. This can be demonstrated by observing the number of P Cygni spectra that separate into a cluster as the number of clusters is increased beyond the value 10 used in Chapter 4. The maximum number of P Cygni and inverse P Cygni were separated when the number of clusters was set to 45. This is significantly higher than what was observed in the results presented in Chapter 4. The tree generated by agglomerative hierarchical clustering is thus cut at a depth of 45 as opposed to 10 for this specific sample for a majority separation of P Cygni and inverse P Cygni spectra. 
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.45]{figures/p cygni ensemble.png}
-\caption{P Cygni spectra identified. Note that one outlier is present in this cluster.}
+\caption{Ensemble plot of 243 P Cygni spectra identified in DR3 using DTW.}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.45]{figures/p cugni 2.png}
+\caption{Ensemble plot of 53 P Cygni spectra identified in DR3 using DTW. These were not included in the main P Cygni cluster but appeared in a separate group, likely due to less prominent absorption feature near H$\upalpha$}
 \end{figure}
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.45]{figures/inverse p cygni ensemble.png}
-\caption{The cluster of inverse P Cygni spectra.}
+\caption{Ensemble plot of 219 P Cygni spectra identified in DR3 using DTW.}
 \end{figure}
+
+The significant advantage of utilizing a higher number of clusters than 10 is that if as in the case of DR3, more peculiar emission-line spectra are present, they will be separated from the total data set more effectively i.e. there is no scheme by which these extremely peculiar yet non-numerous spectra can hide in a larger set of data points. These peculiar spectra would form their own minority clusters within the overall hierarchy of the tree generated by the clustering procedure. As far as the author is aware, there exists no precedent in literature for selecting 45 distinct classes for emission-line spectra, however given that the process outlined here is entirely data driven it is justifiable given the majority separation result for P Cygni and inverse P Cygni spectra as well as the identification of peculiar sub species in DR3 which have not been classified previously. Additional details are provided in the Appendix. Manual inspection of key classes were carried out using a dynamic plot created by using the \texttt{plotly} package.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.45]{figures/double peak 1.png}
+\caption{Ensemble plot of 67 double peaked emission-line spectra identified in DR3 using DTW.}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.45]{figures/emission on abs.png}
+\caption{Ensemble plot of 46 self absorption type spectra identified in DR3 using DTW.}
+\end{figure}
+
+
+
+
+
+
+
 
 
