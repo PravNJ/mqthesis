@@ -22,7 +22,9 @@ The larger number of clusters was beneficial in classification of more atypical 
 \caption{Ensemble plot of 53 P Cygni spectra identified in DR3 using DTW. These were not included in the main P Cygni cluster but appeared in a separate group, likely due to less prominent absorption feature near H$\upalpha$. These can be combined with the majority P Cygni cluster to give 296 P Cygni spectra in total.}
 \end{figure}
 
-The equivalent width cut-off that selects H$\alpha$ emission-line spectra from the broader DR3 data set is another significant parameter that impacts the final population of classified emission-line stars. The degree to which this population is influenced by this parameter remains unclear. Unlike the number of clusters, there exists no suitbale guiding values for this parameter in the literature apart from the figure presented in Čotar et al. It can be hypothesised that this parameter is linked to the decoding accuracy of the autoencoder but the details of this relationship is beyond the scope of this work. 
+The equivalent width cut-off that selects H$\alpha$ emission-line spectra from the broader DR3 data set is another significant parameter that impacts the final population of classified emission-line stars. The degree to which this population is influenced by this parameter remains unclear. Unlike the number of clusters, there exists no suitbale guiding values for this parameter in the literature apart from the figure presented in Čotar et al. It can be hypothesised that this parameter is linked to the decoding accuracy of the autoencoder but the details of this relationship is beyond the scope of this work.
+
+
 
 \section{Future Work}
 
@@ -42,6 +44,10 @@ Dynamic time (wavelength) warping and agglomerative hierarchical clustering are 
 
 Dimensionality reduction remains an extremely useful tool when analysing high dimensional data and feature spaces, thus serving as a tool to potentially overcome the curse of dimensionality. However, it remains unclear which suitable lower dimensional representation of high resolution spectra is more useful in a particular context or set of problems. For example, in the context of clustering morphologically similar spectra, it can be argued that the 5-dimensional representation of the spectra in a latent space formed by the autoencoder was more discriminatory than the 2-dimensional space formed using t-SNE. Are there any general principles or rules that can dictate these decisions for future work? In applications where clustering based on another parameter (e.g. effective temperature or metallicity), which lower dimensional representation will yield the best performance? As the volume and complexity of data from large scale surveys continue to grow, determining the most suitable lower dimensional representation or projection of spectra for a given problem can be extremely useful in reducing the complexity of the data analytics process as well as reducing the computing overheads. These and related questions remain unanswered at present.
 
-\subsection{Building Training Data Sets}
+\subsection{Building Training Data Sets for Supervised Learning}
 
 One of the key hurdles a researcher may face when attempting to identify and classify patterns in data using automated methods and machine learning is the lack of training data. Supervised machine learning methods cannot be used in such circumstances. With this work, hundreds of P Cygni and inverse P Cygni spectra have been identified. Additionally other rare species of spectra have also been identified. These can potentially be used to generate a training set for supervised learning algorithms. Care should be taken however when developing these training data sets. It is often important that the training data set accurately reflects the statistics of the population it is attempting to generalise and represent. Thus approaches like stratified sampling must be incorporated into these efforts for the best overall results. 
+
+\subsection{GAIA}
+
+BP-RP spectra from GAIA, 100,000,000 RVS is several million

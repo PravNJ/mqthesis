@@ -1,36 +1,40 @@
 \chapter{Developing a Framework for Classification}
 
-\section{Key Requirements and Constraints}
+\section{Requirements and Constraints}
 
-It was demonstrated in prior chapters that the classification of emission-line stars must take into account the various spectral morphologies present in DR3. Furthermore, morphological classification based on naked eye observations of spectra cannot scale with the volume of data present in GALAH DR3. While machine learning methods such as t-SNE and autoencoders \cite{traven2017galah}\cite{vcotar2021galah} have been relatively successful in detecting H$\upalpha$ emission spectra, they were both unable to further classify emission-line spectra into classes such as P Cygni and inverse P Cygni.
+It was demonstrated in prior chapters that morphological classification based on naked eye observations of spectra cannot scale with the volume of data present in GALAH DR3. While machine learning methods such as t-SNE and autoencoders \cite{traven2017galah}\cite{vcotar2021galah} have been relatively successful in detecting H$\upalpha$ emission spectra, they are both unable to further classify emission-line spectra into classes such as P Cygni and inverse P Cygni.
 
-A classification approach that is sensitive to the meaningful morphological differences between P Cygni, inverse P Cygni and other species is a crucial requirement. For example, feature engineering must take into account the understanding that P Cygni spectra exhibit a red shifted emission peak while the inverse P Cygni spectra exhibit a blue shifted peak and be able to differentiate between classes such as double-peaked emission spectra and emission lines superimposed on absorption.
+When developing a framework for classification, an approach that is sensitive to the meaningful morphological differences between P Cygni, inverse P Cygni and other species is an important requirement. For example, feature engineering of the data must capture the understanding that P Cygni spectra exhibit a red shifted emission peak while the inverse P Cygni spectra exhibit a blue shifted peak and be able to differentiate between classes such as double-peaked emission spectra and emission lines superimposed on absorption. This can be quite intuitive for a human being to do but can prove challenging for a machine. 
 
-Given that DR3 does not have labeled samples of P Cygni and inverse P Cygni spectra, a supervised learning approach to classification will not be suitable in this context. This narrows the field of possible technical and scientific approaches to the unsupervised learning domain \cite{hastie2009elements}. Given that prior work has demonstrated that well known unsupervised clustering methods such as k-means clustering failed to cluster and classify emission-line spectra, this work did not consider these and related methods. 
+Finally, given that the feature space is of size $\sim$ \num[round-precision=2,round-mode=figures, scientific-notation=true]{2928752091}, a classification method must be able to overcome the "curse of dimensionality" and be computationally and memory efficient. 
 
-Instead, this work focused on a first principles based approach, with a particular focus on methods that are sensitive to morphological similarities and differences between spectra. More rudimentary methods such as cross-correlation of signals are examples of techniques that could be sensitive to the various emission line morphologies. However, given that a labeled data set of the various classes of emission-line spectra in DR3 does not exist, this line of inquiry was quickly abandoned as this work was unable to create mean spectra capable of convolving against all DR3 spectra for the various potential classes. Instead, this work explored techniques that can create effects similar to pairwise cross correlation, provide a similarity score (or equivalent) with limited human intervention and with limited or no reliance on rule based approaches that have been used in the past \cite{traven2015gaia}. Finally, given that the feature space is of size $\sim$ \num[round-precision=2,round-mode=figures, scientific-notation=true]{2928752091}, the classification approach must be able to overcome the "curse of dimensionality" and be computationally and memory efficient. 
+Given that DR3 does not have labeled samples of P Cygni and inverse P Cygni spectra, a supervised learning approach to classification was not suitable. This narrowed the approach to the unsupervised learning domain \cite{hastie2009elements}. Given that prior work had demonstrated that well known unsupervised clustering methods such as k-means clustering failed to cluster and classify emission-line spectra \cite{garcia2018machine}, this work did not consider this and related methods. 
 
-These constraints allowed this work to narrow the search for suitable methods to a field known as time series clustering, more specifically unsupervised time series clustering based on a concept used extensively in signal processing called dynamic time warping (DTW) \cite{kruskal1983overview}. First introduced in 1975 as an algorithm for speech recognition \cite{itakura1975minimum}, DTW has been modified and adapted extensively across various scientific disciplines. It was demonstrated in Chapter 2 that DR3 spectra and indeed all spectra can be modeled as "time series". While an individual spectrum does not contain a time axis, the monotonically increasing wavelength grid serves as the analogue of the time axis. Time series methods such as DTW have been more generally developed in the domain of time series analysis \cite{nielsen2019practical} and can be suitably adapted to stellar spectra. With clustering, this work does not rely on labelled data, but rather takes a data-driven approach that learns from the emission-line morphologies present in the normalised spectra data of DR3 by comparing pairwise distance based similarities between spectra.
+Instead, this work focused on a first principles based approach, with a focus on methods that are sensitive to morphological similarities and differences between spectra. More rudimentary methods such as cross-correlation of signals are examples of techniques that could be sensitive to the various emission line morphologies. However, given that a labeled data set of the various classes of emission-line spectra in DR3 did not exist, this line of inquiry was abandoned as this work was unable to create mean spectra capable of convolving against all DR3 spectra for the various potential classes. Instead, this work explored techniques that created effects similar to pairwise cross correlation, provide a similarity score (or equivalent) with limited human intervention and with minimum reliance on rule based approaches that have been used in the past \cite{traven2015gaia}. 
+
+These constraints allowed this work to narrow the search for suitable methods to a field known as unsupervised time series clustering, more specifically a clustering method based on a concept used extensively in signal processing called dynamic time warping (DTW) \cite{kruskal1983overview}. First introduced in 1975 as an algorithm for speech recognition \cite{itakura1975minimum}, DTW has been modified and adapted extensively in various scientific disciplines. It was demonstrated in Chapter 2 that DR3 spectra and indeed all spectra are mathematically analogous to time series. While an individual spectrum does not contain a time axis, the monotonically increasing wavelength grid serves as the analogue of the time axis. Time series methods such as DTW have been more generally developed in the domain of time series analysis \cite{nielsen2019practical} and can be suitably adapted to stellar spectra. With clustering, this work did not rely on labelled data, but rather took a data-driven approach that learns from the emission-line morphologies present in the normalised spectral data of DR3 by comparing pairwise distances between spectra.
 
 \section{Dynamic Time Warping}
 
-Dynamic time warping (DTW) is a time series analysis algorithm that can measure similarity between two temporal sequences. The similarity can then be used to cluster morphologically similar spectra into meaningful groups. These clusters can then be used to classify spectra into distinct classes. DTW is suitable for clustering problems where the morphology of the signal plays a salient role \cite{nielsen2019practical}. The name of the algorithm itself is inspired by the methodology where two signals are warped to align them on the temporal domain. For stellar spectra, this warping takes place in the wavelength domain and thus produces a discrete dynamic wavelength warping effect.
+Dynamic time warping (DTW) is a time series analysis algorithm that can measure similarity between two temporal sequences. The similarity can then be used to cluster morphologically similar spectra into meaningful groups. These clusters can then be used to classify spectra into distinct classes. 
 
-\begin{figure}[h]
+DTW is suitable for clustering problems where the morphology of the signal plays a salient role over other features \cite{nielsen2019practical} and where labeled data is unavailable. The name is inspired by the methodology itself where two signals are stretched or warped to align them on the temporal axis. For stellar spectra, this warping takes place in the wavelength domain and thus produces a discrete dynamic wavelength warping effect.
+
+\begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.90]{figures/Dynamic_time_warping.png}
 \caption{Each point on the wavelength grid is mapped to a point on the opposite spectrum, but there is no requirement that the mapping is one to one. Reproduced from Nielsen \cite{nielsen2019practical}}
 \end{figure}
 
-As indicated in the figure above, expansion or contraction of the wavelength axis to find the best alignment ensures that the morphology of the spectrum plays a dominant role in determining similarity. This algorithm is often described as being akin to comparing the visual "shape" of the spectra, rather than focusing on the sequence of how these shapes are formed on the wavelength axis. The implications of this will be discussed in detail in this chapter. The algorithm follows several steps and constraints which are,
+As indicated in the figure above, the algorithm works by expanding or contracting the wavelength axis to find the best alignment and thus ensuring that morphologically similar spectra can be compared. This algorithm is often described as being similar to comparing the shape of signals visually. The algorithm follows several steps and constraints which are as follows,
 
 \begin{enumerate}
     \item Every point on the spectrum must be matched with at least one point of the other spectrum
     \item The first and last indices of each spectrum must be matched with their counterparts in the other spectrum
-    \item The mapping must be such that the wavelength is increasing rather than decreasing i.e. do not match a point on on spectrum to a point on the other spectrum that has "passed" i.e. blue shifted. 
+    \item The mapping must be such that the wavelength is increasing rather than decreasing i.e. do not match a point on on spectrum to a point on the other spectrum that has passed i.e. blue shifted. 
 \end{enumerate}
 
-Steps 2 and 3 do not have a significant impact on the DR3 data set being used in this work as they are sampled to the same wavelength and thus are of equal length. There are many possible ways to align two spectra while adhering to these constraints. The algorithm chooses the match that minimises the distance between the spectra. This distance is a cost function and is measured as the sum of the absolute differences between matched points. The absolute difference in this context is the difference between the points' values (wavelength values). Note that it is this distance measure that this research relies on to serve as the basis for clustering similar spectra into classes.
+Steps 2 and 3 do not have a significant impact on the data set being used in this work as the data is sampled to the same wavelength grid and are thus of equal length. There are many possible ways to align two spectra while adhering to these constraints. The algorithm chooses the alignment that minimises the distance between the spectra. This distance is a cost function and is measured as the sum of the absolute differences between matched points. The absolute difference in this context is the difference between the points' values (wavelength values). Note that it is this distance measure that this research relies on to serve as the basis for clustering similar spectra into classes.
 
 The Pythonic representation of this algorithm is as follows,
 
@@ -56,24 +60,24 @@ def distDTW(lambda1, lambda2):
      return sqrt(DTW[len(lambda1)-1, len(lambda2)-1])
 \end{lstlisting}
 
-Despite the effectiveness of this algorithm, the computational complexity is of order $O(N^2)$. As this presents a significant computational cost and overhead, this research relies on a linear time complexity i.e. $O(N)$ Python language implementation of DTW called \texttt{FastDTW} to compute the optimum distance between spectra and thus the similarity \cite{salvador2007toward}. \texttt{FastDTW} is a linear approximation to the DTW method above and a full discussion is beyond the scope of this thesis. 
+Despite the effectiveness of this algorithm, the computational complexity is of order $O(N^2)$. As this presents a significant computational cost and overhead, this research relies on a linear time complexity i.e. $O(N)$ Python language implementation of DTW called \texttt{FastDTW} to compute the optimum distance between spectra and thus the similarity \cite{salvador2007toward}. \texttt{FastDTW} is a linear approximation to the DTW method above and a full discussion how it compares to other implementations of DTW is beyond the scope of this thesis. 
 
-In addition to computational complexity, an important consideration when running DTW is available memory. All spectral data must be loaded into memory (RAM) when computing DTW distances. In the case of DR3, this implies holding $\sim$ \num[round-precision=2,round-mode=figures, scientific-notation=true]{2928752091} features in memory. The computational hardware available for this project had a memory capacity of $\sim$ 300 GB. DTW required a memory capacity of at least 1TB for the $\sim$ \num[round-precision=2,round-mode=figures, scientific-notation=true]{2928752091} features. This is a significant amount of data to hold in memory. 
+In addition to computational complexity, an important consideration is available memory. Generally, all spectral data must be loaded into memory (RAM) when computing DTW distances. In the case of DR3, this implies holding $\sim$ \num[round-precision=2,round-mode=figures, scientific-notation=true]{2928752091} features in memory. The computational hardware available for this project had a memory capacity of $\sim$ 300 GB. \texttt{FastDTW} in particular required a memory capacity of at least 1TB for the $\sim$ \num[round-precision=2,round-mode=figures, scientific-notation=true]{2928752091} features. This is a significant amount of data to hold in memory and presented a challenge.
 
-This work presents two strategies to overcome these limitations and reduce computational and memory overheads.
+This work presents two strategies to overcome these challenges and reduce computational and memory overheads. These are as follows,
 
 \begin{enumerate}
-    \item Reduce the number of features - As explained in a prior chapter, this research will pre-select only the region around H$\upalpha$. DTW will be run on this region only.
-    \item Reduce the search space from the entire DR3 data set to a subset which has a higher chance of yielding P Cygni, inverse P Cygni and other emission-line spectra - The existence of H$\upalpha$ emission features is a precursor to the existence of P Cygni and inverse P Cygni features in a spectrum. Thus this work used the H$\upalpha$ emission-line data set from Čotar et al.\cite{vcotar2021galah} for prototyping the technique. This subset with $\sim$ 10,000 candidates includes data from both GALAH and other related surveys. Presumably, this data set only contains H$\upalpha$ emission-line spectra and not typical spectra.
+    \item Reduce the number of features - As explained in a Chapter 2, this work pre-selects only the region around H$\upalpha$. \texttt{FastDTW} was run on this region only.
+    \item Reduce the search space from the entire DR3 data set to a subset which has a higher chance of yielding P Cygni, inverse P Cygni and other emission-line spectra - The existence of H$\upalpha$ emission-line spectra is a precursor to the existence of P Cygni and inverse P Cygni spectra Thus this work used the H$\upalpha$ emission-line data set from Čotar et al.\cite{vcotar2021galah} for prototyping this technique. This subset with $\sim$ 10,000 candidates includes data from both GALAH and other related surveys. Presumably, this data set only contains H$\upalpha$ emission-line spectra and not typical spectra.
 \end{enumerate}
 
 \section{Agglomerative Hierarchical Clustering}
 
-Given a similarity measure, and in the case of DTW, pairwise distance measurements, hierarchical clustering can be used to group similar spectra into clusters. Once a similarity measure (or a dissimilarity measure) has been specified, hierarchical clustering produces a representation in which clusters at each level of the hierarchy are created by merging clusters at the next lower level. At the lowest level, each cluster contains a single observation. At the highest level, there exists a single cluster that contains all of the data \cite{hastie2009elements}. There are two basic paradigms to traverse these levels or "tree", aggolomerative (bottom-up) and divisive (top-down). 
+Given a similarity measure, in the case of DTW, pairwise distance measurements, hierarchical clustering can be used to group similar spectra into clusters. Once a similarity measure (or a dissimilarity measure) has been specified, hierarchical clustering produces a representation in which clusters at each level of the hierarchy are created by merging clusters at the next lower level. At the lowest level, each cluster contains a single observation. At the highest level, there exists a single cluster that contains all of the data \cite{hastie2009elements}. There are two basic paradigms to traverse these levels or tree, namely, aggolomerative (bottom-up) and divisive (top-down). 
 
-With agglomerative clustering, each spectrum will form a singleton cluster. At each step, the most similar spectra will be merged into a single cluster, producing one less cluster at the next higher level. The similarity between two spectra is defined as the DTW distance between them. Lower distances imply a greater similarity while greater distances indicate a dissimilarity. 
+With agglomerative clustering, initially, each spectrum will form a singleton cluster. At each step, the most similar spectra will be merged into a single cluster, producing one less cluster at the next higher level. The similarity between two spectra is based on the pre-computed DTW distance between them. A lower distance implies a greater similarity while a higher distance indicates a dissimilarity.  
 
-Based on the similarity (and dissimilarity) between individual spectra, a \emph{cluster dissimilarity} can also be defined. Consider two clusters in such a scheme called $A$ and $B$. The dissimilarity between the two clusters $d(A,B)$ is computed from the set of pairwise observation dissimilarities $d_{ij}$, where one member of the pair $i$ is in $A$ and the other $j$ is in $B$. The \emph{complete linkage dissimilarity} between the two clusters is set to be the dissimilarity of the furthest (most dissimilar) pair of spectra
+Based on the similarity (and dissimilarity) between individual spectra, a \emph{cluster dissimilarity} can also be defined. Consider two clusters called $A$ and $B$. The dissimilarity between the two clusters $d(A,B)$ is computed from the set of pairwise dissimilarities $d_{ij}$, where one member of the pair $i$ is in $A$ and the other $j$ is in $B$. The \emph{complete linkage dissimilarity} between the two clusters is set to be the dissimilarity of the furthest (most dissimilar) pair of spectra,
 
 \begin{equation}
     d(A,B) = \max_{\substack{i \in A \\ j \in B}} d_{ij}
@@ -85,9 +89,9 @@ This is also known as the farthest neighbour technique. Other dissimilarity meas
     d(A,B) = \min_{\substack{i \in A \\ j \in B}} d_{ij}
 \end{equation}
 
-Hierarchical clusters can be visualised using a dendogram. A dendogram is a binary tree that represents the recursive agglomeration (or division). The height of the tree (or a branch) is proportional to the inter-group dissimilarity defined above. 
+Hierarchical clusters can be visualised using a dendogram. A dendogram is a binary tree that represents the recursive agglomeration (or division) of clusters. The height of the tree (or a branch) is proportional to the inter-group dissimilarity defined above. 
 
-\begin{figure}[h]
+\begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.60]{figures/complete linkage.png}
 \caption{Dendograms for the same data set using different measures. Note the longer branch lengths of the complete linked tree that selects for maximum dissimilarity. Reproduced from Hastie et al.\cite{hastie2009elements}}
@@ -146,15 +150,13 @@ Once the coefficient for each sample is calculated, the mean silhouette score fo
 
 At face value it appears that a cluster size of nine is the optimum cluster size given that this produces the largest silhouette score. However upon closer examination it was concluded that a cluster size of ten is more suitable under the essential constraint that P Cygni and inverse P Cygni spectra should be adequately separated from other clusters. Thus, the spectra that belong to each cluster for both nine clusters and ten clusters were plotted. For nine clusters, while a P Cygni only cluster was discovered, a cluster containing inverse P Cygni spectra was not discovered. However for a cluster size of ten, two clear clusters of P Cygni and inverse P Cygni spectra were discovered.
 
-\begin{figure}[h]
+\begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.45]{figures/pcygni.png}
 \caption{102 P Cygni spectra identified using clustering.}
 \end{figure}
 
-The inverse P Cygni cluster contains an outlier. This will be discussed further in subsequent chapters.
-
-\begin{figure}[h]
+\begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.45]{figures/inverse p cygni.png}
 \caption{63 Inverse P Cygni spectra identified using clustering.}
