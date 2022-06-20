@@ -125,6 +125,10 @@
 \begin{center}
 \begin{minipage}{4in}
 \parindent=0pt
+This thesis is an account of research undertaken between
+July 2021 and June 2022 at The School of Mathematical and Physical Sciences, Macquarie
+University, Sydney NSW, Australia.
+
 Except where acknowledged in the customary manner, the material
 presented in this thesis is, to the best of my knowledge, original and
 has not been submitted in whole or part for a degree in any university.
