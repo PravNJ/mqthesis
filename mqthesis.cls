@@ -106,7 +106,7 @@
     \begin{center}
         A thesis submitted to Macquarie University\\
         \degreetext{}\\
-        Department of \expandafter{\@department}\\
+        \expandafter{\@department}\\
         \@submitdate\\[3cm]
         \includegraphics[width=0.3 \columnwidth]{MQlogo}\\
     \end{center}
