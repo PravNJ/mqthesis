@@ -2,13 +2,11 @@
 
 %\usepackage{natbib}
 \usepackage[bottom]{footmisc}
+
 \usepackage[section]{placeins}
+
 \usepackage{graphicx}
-\usepackage[%  
-    colorlinks=true,
-    pdfborder={0 0 0},
-    linkcolor=blue
-]{hyperref}
+
 \usepackage[
 backend=biber,
 style=phys,
@@ -16,12 +14,12 @@ style=phys,
 \title{A bibLaTeX example}
 \addbibresource{references.bib}
 
+\usepackage{hyperref}
+
 %\usepackage{natbib}
 %\usepackage[backend=bibtex]{biblatex}
 %\bibliographystyle{apj}
 %\bibliography{references.bib}
-
-
 \usepackage[scientific-notation=true]{siunitx}
 \usepackage{listings}
 \usepackage{amsmath}
@@ -128,6 +126,7 @@ style=phys,
 
 % tSNE
 \input{chap_5_tsne}
+\let\cleardoublepage\clearpage
 
 % NN
 \input{chap_6_nn}
