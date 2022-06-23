@@ -7,19 +7,24 @@
 
 \usepackage{graphicx}
 
-\usepackage[
-backend=biber,
-style=phys,
-]{biblatex}
-\title{A bibLaTeX example}
-\addbibresource{references.bib}
+%\usepackage[
+%backend=biber,
+%style=phys,
+%]{biblatex}
+%\title{A bibLaTeX example}
+%\addbibresource{references.bib}
 
 \usepackage{hyperref}
 
 %\usepackage{natbib}
+%\bibliographystyle{aasjournal}
 %\usepackage[backend=bibtex]{biblatex}
-%\bibliographystyle{apj}
+%%\bibliographystyle{apj}
 %\bibliography{references.bib}
+
+%\bibpunct[, ]{(}{)}{;}{a}{,}{,}
+%\bibpunct[, ]{(}{)}{;}{a}{,}{,}
+
 \usepackage[scientific-notation=true]{siunitx}
 \usepackage{listings}
 \usepackage{amsmath}
@@ -114,6 +119,7 @@ style=phys,
 
 % Introduction
 \input{chap_1_intro}
+\let\cleardoublepage\clearpage
 
 % Data
 \input{chap_2_halpha_spectra}
@@ -158,8 +164,9 @@ style=phys,
 
 % Bibliography, in BibTeX format (the references.bib file)
 
-\bibliography{references}
-
-\printbibliography
-
+%\bibliography{references}
+\newpage
+%\printbibliography
+\bibliography{references.bib}
+%\bibliographystyle{aasjournal}
 \end{document}

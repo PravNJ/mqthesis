@@ -14,7 +14,7 @@ This chapter builds on these conclusions and presents a proof of concept pipelin
 
 \section{Identifying H$\upalpha$ Emission-line Spectra}
 
-Chapter 2 presented an autoencoder neural network developed by Čotar et al. that is capable of identifying H$\upalpha$ emission-line spectra\cite{vcotar2021galah}. This work adapted this method and used it as a pre-processing step prior to the application of the DTW based agglomerative hierarchical clustering method demonstrated in Chapter 4. The method is as follows.
+Chapter 2 presented an autoencoder neural network developed by Čotar et al. that is capable of identifying H$\upalpha$ emission-line spectra \citep{vcotar2021galah}. This work adapted this method and used it as a pre-processing step prior to the application of the DTW based agglomerative hierarchical clustering method demonstrated in Chapter 4. The method is as follows.
 
 The autoencoder learns the latent space representation of non-emission line spectra but \emph{does not} learn the latent space representation of emission-line spectra accurately. This latent space represents each higher dimensional high resolution spectrum as a five dimensional vector. This process is known as encoding. Once the training phase is completed, the autoencoder was fed the total DR3 data set such that it generates predictions for each spectrum. This process is known as decoding. 
 
@@ -22,21 +22,21 @@ The training data is deliberately biased towards non-emission line spectra (so-c
 
 \subsection{The Autoencoder Architecture and Training}
 
-The autoencoder architecture presented here is similar to the work of Čotar et al. and maps high resolution spectra of dimension 4,459 to a five dimensional latent space. The popular deep-learning frameworks \texttt{tensorflow}\cite{tensorflow2015-whitepaper} and \texttt{keras}\cite{chollet2015keras} were used to develop the autoencoder.
+The autoencoder architecture presented here is similar to the work of Čotar et al. and maps high resolution spectra of dimension 4,459 to a five dimensional latent space. The popular deep-learning frameworks \texttt{tensorflow} \citep{tensorflow2015-whitepaper} and \texttt{keras} \citep{chollet2015keras} were used to develop the autoencoder.
 
-Each successive dense layer in the neural network reduces the dimensionality of the input layer successively by 75\%, 50\%, 25\% and finally by 10\%. Each layer was activated by the non-linear PReLU function \cite{he2015delving}. The training loss is minimised using the Adam optimiser which performs gradient descent \cite{kingma2014adam}.
+Each successive dense layer in the neural network reduces the dimensionality of the input layer successively by 75\%, 50\%, 25\% and finally by 10\%. Each layer was activated by the non-linear PReLU function \citep{he2015delving}. The training loss is minimised using the Adam optimiser which performs gradient descent \citep{kingma2014adam}.
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[scale=0.15]{figures/autoencoder diagram.png}
+\includegraphics[scale=0.13]{figures/autoencoder diagram.png}
 \caption{Visual representation of the encoder. The value in
-the right most column indicates the number of input and output
+the right most column of each layer indicates the number of input and output
 connections to neighboring layers.}
 \end{figure}
 
 Čotar et al. recommend inverting the flux values (1 - normalised flux) prior to training and prediction. Greater training stability was achieved by this inversion. Furthermore, they recommend an epoch size of 350 and a batch size of 40,000 spectra. For validation, 10\% of the samples were selected and set aside. This work followed the same conventions. 
 
-For training, the autoencoder required a training set that is either significantly biased towards non-emission line spectra around H$\upalpha$ or contains non-emission line spectra exclusively. In order to select these spectra in DR3, this work used the quality criteria recommended by Čotar et al.\cite{vcotar2021galah}, Buder et al.\cite{buder2021galah+} and Kos et al.\cite{kos2017galah}. 
+For training, the autoencoder required a training set that is either significantly biased towards non-emission line spectra around H$\upalpha$ or contains non-emission line spectra exclusively. In order to select these spectra in DR3, this work used the quality criteria recommended by Čotar et al. \citep{vcotar2021galah}, Buder et al. \citep{buder2021galah+} and Kos et al. \citep{kos2017galah}. 
 
 While these criteria may not fully guarantee that the autoencoder will be trained on non-emission line spectra exclusively, prior work by Čotar et al. indicated that they are sufficiently robust for the purpose of training this specific network. The Data Central SQL/ADQL catalogue query service was used to retrieve GALAH DR3 \texttt{sobject\_id} values that matched these criteria. Namely,
 
@@ -97,7 +97,7 @@ The difference spectra between the predicted and the original DR3 spectra (obser
 \caption{A non-emission line spectrum, the autoencoder prediction and corresponding difference spectrum. Note the flat response of the difference spectrum. This response can be quantified by calculating its equivalent width.}
 \end{figure}
 
-The equivalent width within the range 6561\r{A} - 6565\r{A} was determined using the popular Python packages \texttt{astropy}\cite{astropy:2018}\cite{astropy:2013} and \texttt{specutils}\cite{specutils}. For consistency, these widths were calculated for the inverted difference spectra. Čotar et al. used an equivalent width cut-off of 0.25 to separate emission-line spectra from DR3. This work tested the sensitivity of this cut-off parameter. Selecting a lower threshold for this parameter like EW > 0.20 allows for a wider selection of potential H$\upalpha$ emission-line spectra while a higher threshold such as EW > 0.50 may restrict the selection to only the strongest emitters. The rationale for choosing EW > 0.25 in Čotar et al. is presumably based on a trial and error approach. This work took a similar strategy to fine tune this parameter and select a reasonable population of H$\upalpha$ emission-line spectra by setting EW > 0.22. This value provided the best overall performance. However, this cut-off does not guarantee that the maximum number of H$\upalpha$ emission-line spectra is selected. 
+The equivalent width within the range 6561\r{A} - 6565\r{A} was determined using the popular Python packages \texttt{astropy} \citep{astropy:2018, astropy:2013} and \texttt{specutils} \citep{specutils}. For consistency, these widths were calculated for the inverted difference spectra. Čotar et al. used an equivalent width cut-off of 0.25 to separate emission-line spectra from DR3. This work tested the sensitivity of this cut-off parameter. Selecting a lower threshold for this parameter like EW > 0.20 allows for a wider selection of potential H$\upalpha$ emission-line spectra while a higher threshold such as EW > 0.50 may restrict the selection to only the strongest emitters. The rationale for choosing EW > 0.25 in Čotar et al. is presumably based on a trial and error approach. This work took a similar strategy to fine tune this parameter and select a reasonable population of H$\upalpha$ emission-line spectra by setting EW > 0.22. This value provided the best overall performance. However, this cut-off does not guarantee that the maximum number of H$\upalpha$ emission-line spectra is selected. 
 
 Given that Čotar et al. used a different population for their work, the H$\upalpha$ emission-line spectra discovered cannot be directly compared to those found in GALAH DR3 using the method above. It can be noted that only 4,556 out of 10,364 objects identified by Čotar et al. were present in GALAH DR3 sample, which comprised of 396,338 spectra. These 4,556 were also captured and recovered within the H$\upalpha$ emission-line spectra discovered using the autoencoder and setting EW > 0.22. The summary statistics for each sample are provided in the appendix.
 
@@ -110,7 +110,7 @@ Given that Čotar et al. used a different population for their work, the H$\upal
 
 \section{Applying Dynamic Time Warping and Agglomerative Hierarchical Clustering}
 
-Once the H$\upalpha$ emission-line spectra were selected, the data was passed to the next step of the analytics pipeline. The DTW distance matrix was computed for each spectrum ensuring that only masked data was presented to the \texttt{FastDTW} algorithm, the masked region being 6561\r{A} - 6565\r{A}\cite{traven2017galah}. As mentioned Chapter 4, this approach reduces run-time and computational complexity. 
+Once the H$\upalpha$ emission-line spectra were selected, the data was passed to the next step of the analytics pipeline. The DTW distance matrix was computed for each spectrum ensuring that only masked data was presented to the \texttt{FastDTW} algorithm, the masked region being 6561\r{A} - 6565\r{A} \citep{traven2017galah}. As mentioned Chapter 4, this approach reduces run-time and computational complexity. 
 
 \begin{figure}[!htb]
 \centering
@@ -146,7 +146,7 @@ This richer variety of morphologies can be attributed to the fact that the DR3 p
 \caption{Ensemble plot of 219 P Cygni spectra identified in DR3 using DTW.}
 \end{figure}
 
-The significant advantage of utilizing a higher number of clusters than 10 is that if as in the case of DR3, more peculiar emission-line spectra are present, they will be separated from the total data set more effectively i.e. there is no scheme by which these extremely peculiar yet non-numerous spectra can hide in a larger set of data points. These peculiar spectra would form their own minority clusters within the overall hierarchy of the tree generated by the clustering procedure. As far as the author is aware, there exists no precedent in literature for selecting 45 distinct classes for emission-line spectra. However, given that the process outlined here is entirely data driven, it is justifiable since this value creates a majority separation of P Cygni and inverse P Cygni spectra as well as the separation of peculiar sub species in DR3 which have not been classified previously. Additional details of these are provided in the Appendix. Manual inspection of key classes were carried out using a dynamic plot created by using the \texttt{plotly} package.
+The significant advantage of utilizing a higher number of clusters than 10 is that if as in the case of DR3, more peculiar emission-line spectra are present, they will be separated from the total data set more effectively i.e. there is no scheme by which these extremely peculiar yet non-numerous spectra can hide in a larger set of data points. These peculiar spectra would form their own minority clusters within the overall hierarchy of the tree generated by the clustering procedure. As far as the author is aware, there exists no precedent in literature for selecting 45 distinct classes for emission-line spectra. However, given that the process outlined here is entirely data driven, it is justifiable since this value creates a majority separation of P Cygni and inverse P Cygni spectra as well as the separation of peculiar sub species in DR3 which have not been classified previously. Additional details of these are provided in the Appendix. Further inspection of key classes were carried out using a dynamic plot created by using the \texttt{plotly} package.
 
 \begin{figure}[!htb]
 \centering
@@ -160,7 +160,11 @@ The significant advantage of utilizing a higher number of clusters than 10 is th
 \caption{Ensemble plot of 46 self absorption type spectra identified in DR3 using DTW.}
 \end{figure}
 
-INSERT PLOTLY IMAGE
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.38]{figures/plotly image.png}
+\caption{Inspecting a class of spectra identified by DTW using a \texttt{plotly} plot which can dynamically change based on the object selected.}
+\end{figure}
 
 \section{Concluding Remarks}
 
