@@ -1,29 +1,29 @@
-\chapter{Evaluating t-SNE for H$\upalpha$ Emission-line Spectra Selection}
+\chapter{Evaluating t-SNE for H$\alpha$ Emission-line Spectra Selection}
 
-t-SNE is dimensionality reduction method that can map high dimensional data such as higher resolution spectra, to a two dimensional feature space. Traven et al. and others have used this method on survey data from GALAH to classify spectra into classes such as binary stars, cool metal-poor giants and small number of H$\upalpha$ emission-line stars. In Traven et al. manual intervention and visual inspection was used when identifying and classifying H$\upalpha$ emission-line stars.
+The dimensionality reduction method t-SNE can map high dimensional data such as higher resolution spectra, to a two dimensional feature space. \citet{traven2017galah} have used this method on survey data from GALAH to classify spectra into classes such as binary stars, cool metal-poor giants and H$\alpha$ emission-line stars. In \citet{traven2017galah}, manual intervention and visual inspection were used when identifying and classifying H$\alpha$ emission-line stars.
 
-Since Traven et al. used this method to identify some H$\upalpha$ emission-line stars, this work investigated whether t-SNE could be used as a pre-processing step prior to applying the DTW based method described in Chapter 4. It shall be demonstrated in this chapter that for GALAH spectra, there is no guarantee that this mapping or projection preserves morphological features. This implies that it is not guaranteed that this method could identify and classify P Cygni, inverse P Cygni and other emission-line stars from a set of H$\upalpha$ emission-line stars. 
+Since \citet{traven2017galah} used this method to identify a small number of H$\alpha$ emission-line stars, this work investigates whether t-SNE could be used as a pre-processing step prior to applying the DTW-based method described in Chapter 4. It shall be demonstrated in this chapter that for GALAH spectra, there is no guarantee that this mapping or projection preserves morphological features. Thus it is not guaranteed that this method could identify and classify P Cygni, inverse P Cygni and other emission-line stars from a set of H$\alpha$ emission-line stars. Therefore the DTW-based method may be a more suitable method for this task.
 
 \section{Introduction to t-SNE}
 
 t-distributed stochastic neighbour embedding, or t-SNE, is a dimensionality reduction method that can be used to map higher dimensional data to a two dimensional plane \citep{van2008visualizing} . This t-SNE map can then be used to cluster and classify similar data points into groups and classes using clustering methods such as DBSCAN. Often, similar objects will be in close proximity to each other in the lower dimensional space.
 
-t-SNE has been used successfully in the past to separate and segment a subset of H$\upalpha$ emission-line spectra in the GALAH survey by Traven et al. This study isolated 215 H$\upalpha$ and H$\beta$ emission-line spectra from a prior GALAH data release of approximately 300,000 spectra \citep{traven2017galah}.
+t-SNE has been used successfully in the past to separate and segment a subset of H$\alpha$ emission-line spectra in the GALAH survey by \citet{traven2017galah} The study isolated 215 H$\alpha$ and H$\beta$ emission-line spectra from a prior GALAH data release of approximately 300,000 spectra \citep{traven2017galah}.
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.40]{figures/tsne traven.png}
-\caption{The t-SNE plot with classified regions reproduced from Traven et al. \citep{traven2017galah}. The x and y axes do not have a physical meaning but serve as spanning vectors for the 2-dimensional space.}
+\caption{The t-SNE plot with classified regions reproduced from \citet{traven2017galah}. The x and y axes do not have a physical meaning but serve as spanning vectors for the 2-dimensional space.}
+\label{fig5.1}
 \end{figure}
 
-To overcome the curse of dimensionality, high dimensional spectra from GALAH DR3 can be mapped to a two dimensional plane. If it can be assumed that relevant features in the higher dimensional representation that are common to H$\upalpha$ emission emission-line spectra are preserved during the mapping from higher dimensions to two dimensions, then this fact can be used to segment H$\upalpha$ emission-line spectra into a distinct class. This class of H$\upalpha$ emission-line spectra can then be used as a starting point for further analysis using the DTW based method discussed in Chapter 4. It is not immediately clear whether this method is sensitive to the different morphologies of emission-line spectra. Thus the use of t-SNE must be evaluated if it is to be used as a method to select H$\upalpha$ emission-line spectra.
+To overcome the curse of dimensionality, high dimensional spectra from GALAH DR3 can be mapped to a two dimensional plane. If it can be assumed that relevant features in the higher dimensional representation that are common to H$\alpha$ emission emission-line spectra are preserved during the mapping from higher dimensions to two dimensions, then the spectra can be clustered into a distinct class. This class of H$\alpha$ emission-line spectra can then be used as a starting point for further analysis using the DTW-based method discussed in Chapter 4. It is, however, not immediately clear whether this method is sensitive to the different morphologies of emission-line spectra. Thus the use of t-SNE must be evaluated if it is to be used as a method to select H$\alpha$ emission-line spectra.
 
 \subsection{Dimensionality Reduction: The Mathematical foundations of t-SNE}
 
-This section presents a brief mathematical introduction to t-SNE adapted from Traven et al. \citep{traven2017galah}. A more detailed discussion is found in Van der Maaten and Hinton \citep{van2008visualizing}. 
+This section presents a brief mathematical introduction to t-SNE adapted from \citet{traven2017galah}. A more detailed discussion is found in Van der Maaten and Hinton \citep{van2008visualizing}. 
 
-Consider $N$ spectra where each spectrum is a higher dimensional object $x_i$. The low dimensional representation of this data is achieved by the optimal positioning of data points in the lower dimensional projection map. In order to achieve this, the t-SNE process defines a similarity between data points in the original higher dimensional space $X$ and in the lower dimensional project space, (2-dimensional for the purpose of this work) $Y$. These are described by the symmetric joint-
-probability distributions $P$ and $Q$, respectively
+Consider $N$ spectra where each spectrum is a higher dimensional object $x_i$. The low dimensional representation of this data is achieved by the optimal positioning of data points in the lower dimensional projection map. In order to achieve this, the t-SNE process defines a similarity between data points in the original higher dimensional space $X$ and in the lower dimensional project space, $Y$ (2-dimensional for the purpose of this work). These are described by the symmetric joint-probability distributions $P$ and $Q$, respectively.
 
 The pairwise similarity between data points $x_i$ and $x_j$ is modeled by the probability that one data point would pick another data point as its neighbour. This depends on the probability density under a Gaussian in space $X$ while a Student's t-distribution is used in space $Y$. t-SNE first computes probabilities $p_{ij}$ that are proportional to the similarity of spectra $x_i$ and $x_j$ as follows,
 
@@ -42,7 +42,7 @@ Note that $p_{i\mid i}=0$ and $\sum _{j}p_{j\mid i}=1$ for all $i$. Now define,
 
 and note that $p_i_j=p_j_i$, $p_i_i=0$ and $\sum _{ij} p_i_j=1$
 
-The bandwidth of the Gaussian distribution $\sigma_i$ is set such that the perplexity of the conditional distribution equals a predefined perplexity. This perplexity is a user defined quantity and is considered a hyper-parameter of this method. This implies that the bandwidth is adapted to the density of the data, Smaller values of $\sigma_i$ are thus used in denser parts of the data space $X$. 
+The bandwidth of the Gaussian distribution $\sigma_i$ is set such that the perplexity of the conditional distribution equals a predefined perplexity. This perplexity is a user defined quantity and is considered a hyper-parameter of this method. This implies that the bandwidth is adapted to the density of the data. Smaller values of $\sigma_i$ are thus used in denser parts of the data space $X$. 
 
 Next, t-SNE will attempt to learn a lower dimensional map with objects $y_i$ in $Y$ that reflect the similarities $p_i_j$ computed above. The process measures similarities $q_i_j$ between two points $y_i$ and $y_j$ using a similar approach. 
 
@@ -54,61 +54,63 @@ For $i$ $\neq$ $j$,
 
 Here $q_i_i=0$ and the t-distribution with one degree of freedom is used to measure similarities between the lower dimensional points. Thus, dissimilar objects will be projected further apart on the map $Y$.
 
-In order to determine the locations $y_i$ on the map $Y$, the non symmetric Kullback–Leibler divergence shown below is minimized using gradient descent. The result of this optimization scheme is a lower dimensional map of the spectral data.
+In order to determine the locations $y_i$ on the map $Y$, the nonsymmetric Kullback–Leibler divergence shown below is minimized using gradient descent. The result of this optimization scheme is a lower dimensional map of the spectral data.
 
 \begin{equation}
     \mathrm {KL} \left(P\parallel Q\right)=\sum _{i\neq j}p_{ij}\log {\frac {p_{ij}}{q_{ij}}}
 \end{equation}
 
-This work used the t-SNE implementation from the popular Python package \texttt{scikit-learn} to generate all t-SNE mappings and results. While other implementations such as multi-core t-SNE exist \citep{Ulyanov2016}, the performance gains of using processor optimised versions of t-SNE over the \texttt{scikit-learn} implementation are modest in this context.
+This work used the t-SNE implementation from the popular Python package \texttt{scikit-learn} to generate all t-SNE mappings and results. While other implementations such as multi-core t-SNE exist \citep{Ulyanov2016}, the performance gains of using processor optimised versions of t-SNE over the \texttt{scikit-learn} implementation are modest in this context. \texttt{scikit-learn} has a more substantive body of literature and is more efficient to use \citep{hackeling2017mastering}. A full comparison of these methods are beyond the scope of this thesis.
 
 \section{Can t-SNE Be Used to Classify Emission-line Spectra?}
 
-This work used an identical approach to Traven et al. on DR3 data to attempt to isolate, cluster and classify potential H$\upalpha$ emission-line spectra. Such emission-line spectra can then be subjected to the pipeline proposed in chapter 4. The first step of this approach involves using t-SNE to dimensionally reduce spectra to a 2-dimensional t-SNE map. The spectra were masked to select the H$\upalpha$ region only \citep{traven2017galah}. The perplexity parameter was set to 30 as this provided reasonable separation of classes in Traven et al.
+In order to evaluate whether t-SNE is a suitable method that can identify emission-line spectra, this work used an identical approach to \citet{traven2017galah} on data from DR3 to attempt to isolate, cluster and classify potential H$\alpha$ emission-line spectra. Such emission-line spectra can then be subjected to the pipeline proposed in chapter 4. The first step of this approach involves using t-SNE to dimensionally reduce spectra to a 2-dimensional t-SNE map. The spectra were masked to select the H$\alpha$ region only \citep{traven2017galah}. The perplexity parameter was set to 30 as this figure provided reasonable separation of clusters in \citet{traven2017galah}. Figure \ref{fig5.2} contains the result of this t-SNE projection for DR3 data. 
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.12]{figures/t-sne halpha masked.png}
-\caption{t-SNE map for all spectra in DR3. Each point is a 2-dimensional representation of a spectrum. Note that only the region around H$\upalpha$ of each spectrum was used to generate this map. The $x$ and $y$ axes contain physically meaningless quantities.}
+\caption{t-SNE map for all spectra in DR3. Each point is a 2-dimensional representation of a spectrum. Note that only the region around H$\alpha$ of each spectrum was used to generate this map. The $x$ and $y$ axes contain physically meaningless quantities.}
+\label{fig5.2}
 \end{figure}
+
+In order to validate if the t-SNE plot can adequately separate H$\alpha$ emission-line spectra, the validated H$\alpha$ emission-line spectra discovered by \citet{vcotar2021galah} were marked on the same map by using the object IDs. These 7786 spectra are marked in pink in Figure \ref{fig5.3}. While a portion of these emission-line spectra are clustered in the bottom left quadrant of the map, the other spectra remain scattered across the map with no obvious meaningful cluster that can be separated out of the t-SNE map. 
+
+This work followed the distance based clustering method used by \citet{traven2017galah} but could not meaningfully separate the 7,786 H$\alpha$ identified by \citet{vcotar2021galah}. This reinforces the hypothesis that t-SNE may not be able to meaningfully capture morphological features from the higher dimension to the two dimensional plane. It may be possible to achieve better clustering performance by iteratively tuning the perplexity hyper-parameter and visually inspecting the map, however, due to time constraints, this was not attempted as this author was unaware of what a suitable range for this parameter may be in the context of GALAH DR3. Future work is needed to study this method further but this is well beyond the scope of this thesis. This work also evaluated whether t-SNE can perform classification of P Cygni and inverse P Cygni spectra better than the results from the DTW-based method discussed in Chapter 4. These results are presented next. 
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.12]{figures/t-sne halpha masked with cotar.png}
-\caption{t-SNE map for all spectra in DR3 with H$\upalpha$ emission-line spectra identified by Čotar et al. tagged in pink.}
+\caption{t-SNE map for all spectra in DR3 with H$\alpha$ emission-line spectra identified by \citet{vcotar2021galah} tagged in pink.}
 \label{fig5.3}
 \end{figure}
 
-In order to validate if the t-SNE plot can adequately separate H$\upalpha$ emission-line spectra, the validated H$\upalpha$ emission-line spectra discovered by Čotar et al. \citep{vcotar2021galah} were marked on the same map by using the object IDs. These 7786 spectra are marked in pink in Figure \ref{fig5.3}. While a portion of these emission-line spectra are clustered in the bottom left quadrant of the map, the other spectra remain scattered across the map with no obvious meaningful cluster that can be separated out of the t-SNE map. 
-
-This work followed the distance based clustering method used by Traven et al. but could not meaningfully separate the 7,786 H$\upalpha$ identified by Čotar et al. using this method. This reinforces the hypothesis that t-SNE may not be able to meaningfully capture morphological features from the higher dimension to the two dimensional plane. It may be possible to achieve better clustering performance by iteratively tuning the perplexity hyper-parameter and visually inspecting the map, however due to time constraints, this was not attempted since this author was unaware of what a suitable range for this parameter may be in the context of GALAH DR3. Future work is needed to study this method further and this is well beyond the scope of this thesis. This work also evaluated whether t-SNE can perform classification of P Cygni and inverse P Cygni spectra better than the results from the DTW based method discussed in Chapter 4. These results are presented next. 
-
 \section{Can t-SNE Be Used to Classify P Cygni and Inverse P Cygni Spectra?}
 
-This worked examined a proposal made by Traven et al. that a second application of t-SNE on H$\upalpha$ emission-line spectra can cluster and classify P Cygni and inverse P Cygni emission-line spectra. In order to evaluate this approach, this work relied on the H$\upalpha$ emission-line spectra identified by Čotar et al. The proposed approach was as follows,
+This work examined a proposal made by \citet{traven2017galah} that a second application of t-SNE on H$\alpha$ emission-line spectra can cluster and classify P Cygni and inverse P Cygni emission-line spectra. In order to evaluate this approach, this work relied on the H$\alpha$ emission-line spectra identified by \citet{vcotar2021galah} The proposed approach was as follows,
 
 \begin{enumerate}
-    \item Generate a t-SNE map of the H$\upalpha$ emission-line spectra identified by Čotar et al. using the hyper parameters suggested by Traven et al.
-    \item Using object IDs, map the ten clusters identified by the method proposed in chapter 4 onto this map
-    \item Validate if t-SNE is able to meaningfully separate the P Cygni and inverse P Cygni spectra identified by the method proposed in chapter 4
+    \item Generate a t-SNE map of the H$\alpha$ emission-line spectra identified by \citet{vcotar2021galah} using the hyper parameters suggested by \citet{traven2017galah}.
+    \item Using object IDs, map the ten clusters identified by the method proposed in chapter 4 onto this map.
+    \item Validate if t-SNE is able to meaningfully separate the P Cygni and inverse P Cygni spectra identified by the method proposed in Chapter 4.
 \end{enumerate}
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.12]{figures/t-sne cotar et al.png}
-\caption{t-SNE map for H$\upalpha$ emission-line spectra identified by Čotar et al. in DR3}
+\caption{t-SNE map for H$\alpha$ emission-line spectra identified by \citet{vcotar2021galah}.}
+\label{fig5.4}
 \end{figure}
 
-Note that the representation is significantly simpler compared to the prior application of t-SNE to DR3. In Chapter 4, DTW and agglomerative hierarchical clustering identified ten clusters. The t-SNE map is coloured and labeled using these clusters in Figure 5.5.
+Note that the representation, which is presented in Figure \ref{fig5.4} is significantly simpler compared to the prior application of t-SNE to DR3. In Chapter 4, DTW and agglomerative hierarchical clustering identified ten clusters. The t-SNE map is coloured and labeled using these clusters in Figure \ref{fig5.5}.
 
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.16]{figures/t-sne colored by dtw.png}
-\caption{t-SNE map for H$\upalpha$ emission-line spectra identified by Čotar et al. labelled based on DTW based clustering.}
+\caption{t-SNE map for H$\alpha$ emission-line spectra identified by \citet{vcotar2021galah} labelled based on DTW based clustering.}
 \label{fig5.5}
 \end{figure}
 
-In Figure \ref{fig5.5} the P Cygni emission-line spectra are represented by cluster 8 and by the colour olive while the inverse P Cygni spectra are represented by cluster 9 and the colour cyan. Note that cluster 8 appears in two physically separate regions of the t-SNE map and as does cluster 9. Thus it is clear that the application of t-SNE on the H$\upalpha$ emission-line spectra identified by Čotar et al. does not meaningfully separate P Cygni and inverse P Cygni spectra into distinct regions of the t-SNE map. For morphology based classification, the DTW based method outlined in chapter 4 outperforms the t-SNE based classification.
+In Figure \ref{fig5.5} the P Cygni emission-line spectra are represented by cluster 8 and by the colour olive, while the inverse P Cygni spectra are represented by cluster 9 and the colour cyan. Note that cluster 8 appears in two physically separate regions of the t-SNE map, as does cluster 9. Thus it is clear that the application of t-SNE on the H$\alpha$ emission-line spectra identified by \citet{vcotar2021galah} does not meaningfully separate P Cygni and inverse P Cygni spectra into distinct regions of the t-SNE map. For morphology based classification, the DTW based method outlined in Chapter 4 outperforms the t-SNE based classification.
 
 \subsection{Examination of the P Cygni Cluster}
 
@@ -121,7 +123,7 @@ In Figure \ref{fig5.5} the P Cygni emission-line spectra are represented by clus
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.45]{figures/pcygni.png}
-\caption{P Cygni spectra identified using DTW based clustering in the H$\upalpha$ emission-line spectra data set released by Čotar et al.}
+\caption{P Cygni spectra identified using DTW-based clustering in the H$\alpha$ emission-line spectra data set released by \citet{vcotar2021galah}}
 \end{figure}
 
 
@@ -139,12 +141,12 @@ In Figure \ref{fig5.5} the P Cygni emission-line spectra are represented by clus
 
 A closer examination of the P Cygni clusters reveals two regions on the t-SNE map that are sufficiently far apart. The P Cygni emission-line spectra in these regions were examined in further detail in order to determine which feature the t-SNE process was selecting for this distinct region separation. This work split the regions along the y axis into two groups, $0<y<40$ and $40<y<70$ . Once these cuts were made, the spectra from each region were plotted on the same wavelength grid. 
 
-The results indicate that while t-SNE may not be able to separate H$\upalpha$ emission-line spectra based on morphology as effectively as DTW based clustering, the 2-dimensional t-SNE space is able to discriminate based on features such as the wavelength at which the maximum flux is observed. This behaviour can be important for future feature engineering when reducing higher dimensional data to two dimensional maps such as t-SNE. This work hypothesises that it is likely that a 2-dimensional representation of a high resolution and higher dimensional spectrum introduces significant compression such that the features that contribute to morphology of P Cygni and inverse P Cygni spectra are no longer meaningfully represented.
+The results indicate that while t-SNE may not be able to separate H$\alpha$ emission-line spectra based on morphology as effectively as DTW based clustering, the 2-dimensional t-SNE space is able to discriminate based on features such as the wavelength at which the maximum flux is observed. This behaviour can be important for future feature engineering when reducing higher dimensional data to two dimensional maps such as t-SNE. This work hypothesises that it is likely that a 2-dimensional representation of a high resolution and higher dimensional spectrum introduces significant compression such that the features that contribute to morphology of P Cygni and inverse P Cygni spectra are no longer meaningfully represented.
 
 \section{Concluding remarks}
 
-t-SNE has proved extremely useful in the classification of high resolution spectra from the GALAH Survey. While some progress has been made in using this method to cluster and classify H$\upalpha$ emission-line spectra \citep{traven2017galah} it appears that more fine tuned methods such as those discussed in Čotar et al perform better on this task \citep{vcotar2021galah}.
+t-SNE has proved extremely useful in the classification of high resolution spectra from the GALAH Survey. While some progress has been made in using this method to cluster and classify H$\alpha$ emission-line spectra \citep{traven2017galah}, it appears that more fine tuned methods such as those discussed in Čotar et al perform better on this task \citep{vcotar2021galah}.
 
-For clustering and classification of P Cygni and inverse P Cygni spectra, it appears that t-SNE may not be sufficiently sensitive to the morphology of these spectra and thus performs sub-optimally in grouping P Cygni spectra and inverse P Cygni spectra into distinct clusters on the t-SNE map. The preservation of features from high dimensions to two dimensions such that H$\upalpha$ emission-line spectra can be meaningfully separated from typical spectra is not guaranteed. The pipeline for P Cygni and inverse P Cygni detection presented in Chapter 4 relies on pre-selection of H$\upalpha$ emission-line spectra from the GALAH survey. Thus t-SNE may not be a sufficiently robust method as a pre-processing step. This work will use an alternative method for this pre-processing step.
+For clustering and classification of P Cygni and inverse P Cygni spectra, it appears that t-SNE may not be sufficiently sensitive to the morphology of these spectra and thus performs sub-optimally in grouping P Cygni spectra and inverse P Cygni spectra into distinct clusters on the t-SNE map. The preservation of features from high dimensions to two dimensions such that H$\alpha$ emission-line spectra can be meaningfully separated from typical spectra is not guaranteed. The pipeline for P Cygni and inverse P Cygni detection presented in Chapter 4 relies on pre-selection of H$\alpha$ emission-line spectra from the GALAH survey. Thus t-SNE may not be a sufficiently robust method as a pre-processing step. Consequently, this work will use an alternative method for this pre-processing step.
 
 This work can hypothesise that some higher dimensional information such as the peak wavelength (wavelength at which maximum flux occurs) has been preserved in the lower dimensional representation of P Cygni spectra and thus can perform a minor discriminatory role in the sub classification of P Cygni spectra based on the location of the maximum flux. This may prove useful in future work, particularly in the context of feature engineering when using other machine learning methods Thus t-SNE could be a robust method for applications and problems where maximum (or minimum) flux plays a more discriminatory role than the morphology of the spectrum.
