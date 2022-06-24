@@ -21,7 +21,7 @@ DTW is suitable for clustering problems where the morphology of the signal plays
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=1]{figures/Dynamic_time_warping.png}
-\caption{Each point on the wavelength grid is mapped to a point on the opposite spectrum, but there is no requirement that the mapping is one to one. Reproduced from Nielsen \citep{nielsen2019practical}}
+\caption{Each point on the wavelength grid is mapped to a point on the opposite spectrum, but there is no requirement that the mapping is one to one. Reproduced from \citet{nielsen2019practical}}
 \label{fig4.1}
 \end{figure}
 
@@ -95,7 +95,7 @@ Hierarchical clusters can be visualised using a dendogram. A dendogram is a bina
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.60]{figures/complete linkage.png}
-\caption{Dendograms for the same toy data set using different similarity measures. Note the longer branch lengths of the complete linked tree that selects for maximum dissimilarity. Reproduced from Hastie et al. \citep{hastie2009elements}}
+\caption{Dendograms for the same toy data set using different similarity measures. Note the longer branch lengths of the complete linked tree that selects for maximum dissimilarity. Reproduced from \citet{hastie2009elements}}
 \end{figure}
 
 This work used the complete linkage dissimilarity to cluster spectral groups. The justification for using this measure over the single linkage dissimilarity is to force the separation of P Cygni and inverse P Cygni spectra into distinct groups by exploiting the maximum distance between two individual spectra that belong to these groups. Other distance measures such as group average clustering uses the average dissimilarity between the groups. Group average clustering can be less accurate in separating the data into clusters as it relies on an average spectrum per cluster which may not completely capture the variation of spectral morphologies within a cluster. Therefore this work did not consider this measure, as it may be less accurate in separating P Cygni from inverse P Cygni and other emission-line spectra due to this averaging or smoothing effect. This work also relies on the agglomerative (bottom-up) method, as it is more robust and has been studied extensively in the literature compared to the divisive (top-down) method \citep{hastie2009elements}.
@@ -122,7 +122,7 @@ This distance matrix was used as the basis for complete linkage aggolomerative h
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.60]{figures/dtw cotar zoomed.png}
-\caption{Pairwise DTW distances for spectral samples in\citet{vcotar2021galah} (zoomed).}
+\caption{Pairwise DTW distances for spectral samples in \citet{vcotar2021galah} (zoomed).}
 \end{figure}
 
 In order to calculate the mean silhouette score, silhouette coefficients for all samples must be calculated as follows:
