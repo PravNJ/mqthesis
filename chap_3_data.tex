@@ -30,7 +30,7 @@ This is then the number of features in the red camera for a given spectrum, \[N_
 Thus the total number of features for the red camera across all available DR3 data is \[N_{T} \approx 4317\times678,423 \approx \num[round-precision=2,round-mode=figures,
      scientific-notation=true]{2928752091}\]
 
-This calculation naively implies the existence of a billion-scale feature space, and consequently a potential billion-dimensional vector space. While a somewhat simplistic estimate, it nonetheless indicates that the data analysis and machine-learning strategy for tackling this dataset should be planned and managed carefully. If care is not taken during feature engineering and pre-processing steps, the volume of data and complexity will lend itself to what is colloquially referred to as the "curse of dimensionality", which refers to the extraordinarily rapid growth in the difficulty of problems as the number of variables (or the dimension) increases \citep{kuo2005lifting}.
+This calculation naively implies the existence of a billion-scale feature space, and consequently a potential billion-dimensional vector space. While a somewhat simplistic estimate, it nonetheless indicates that the data analysis and machine-learning strategy for tackling this data set should be planned and managed carefully. If care is not taken during feature engineering and pre-processing steps, the volume of data and complexity will lend itself to what is colloquially referred to as the "curse of dimensionality", which refers to the extraordinarily rapid growth in the difficulty of problems as the number of variables (or the dimension) increases \citep{kuo2005lifting}.
 
 \begin{figure}[!htb]
 \centering
@@ -42,7 +42,7 @@ This work also utilises a recently published data set of H$\alpha$ emission-line
 
 \citet{vcotar2021galah} identified 10,364 emission-line spectra with varying degrees of H$\alpha$ emission components and sub-components. Summarised information on these spectra, including GALAH DR3 \texttt{sobject\_ids} were released via \href{https://cdsweb.u-strasbg.fr/}{CDS} as open access data. These summarised data, excluding the actual continuum-normalised spectra, were presented as a single \texttt{.fits} format file. 
 
-In Chapter 4 the \citet{vcotar2021galah} sample is used to demonstrate that a novel clustering approach can identify P Cygni and inverse P Cygni spectra and other species of emission-line stars. In addition, this dataset is used to benchmark a well-established dimensionality reduction based clustering method called t-SNE, with these latter results presented in Chapter 5. Given the significantly smaller feature and search space, exploring and prototyping methods on this dataset proved extremely beneficial when developing the full machine-learning method presented in Chapter 6.
+In Chapter 4 the \citet{vcotar2021galah} sample is used to demonstrate that a novel clustering approach can identify P Cygni and inverse P Cygni spectra and other species of emission-line stars. In addition, this data set is used to benchmark a well-established dimensionality reduction based clustering method called t-SNE, with these latter results presented in Chapter 5. Given the significantly smaller feature and search space, exploring and prototyping methods on this data set proved extremely beneficial when developing the full machine-learning method presented in Chapter 6.
 
 \section{Interpreting Spectra as Time Series}
 
@@ -95,7 +95,7 @@ The following conclusions can be drawn from the analysis presented above:
 \begin{enumerate}
 \item When faced with higher dimensional data, dimensionality reduction and sample size pruning can be effective strategies in seeking to identify and classify atypical objects, such as emission-line star spectra. 
 
-\item Open datasets such as that provided by \citet{vcotar2021galah} can be useful as a prototyping aid to iteratively develop and evaluate machine learning methods, given the low volume of data compared to GALAH DR3. 
+\item Open data sets such as that provided by \citet{vcotar2021galah} can be useful as a prototyping aid to iteratively develop and evaluate machine learning methods, given the low volume of data compared to GALAH DR3. 
 
 \item Re-sampling can ensure that all spectra are compared on the same wavelength grid. This is particularly useful for developing machine learning methods, as the consistency of the data can be maintained throughout the process, particularly when comparing morphologies of spectra.  
 
